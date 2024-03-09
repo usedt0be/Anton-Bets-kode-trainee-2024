@@ -8,9 +8,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.users.domain.usecases.GetUsersUseCase
 import com.example.users.ui.theme.UsersTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,16 +37,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
 
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+
 }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    UsersTheme {
-        Greeting("Android")
-    }
-}

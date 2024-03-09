@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -50,6 +51,15 @@ android {
 }
 
 dependencies {
+
+    //Retrofit2
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+
+    //Moshi
+    val moshi_version = "1.15.0"
+    implementation("com.squareup.moshi:moshi:$moshi_version")
+    implementation ("com.squareup.retrofit2:converter-moshi:2.9.0")
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:$moshi_version")
 
 
 
