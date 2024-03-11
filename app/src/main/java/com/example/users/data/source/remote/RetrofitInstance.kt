@@ -2,8 +2,9 @@ package com.example.users.data.source.remote
 
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import javax.inject.Inject
 
-class RetrofitInstance {
+class RetrofitInstance @Inject constructor() {
     companion object {
         private val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(UsersApi.BASE_URL)
