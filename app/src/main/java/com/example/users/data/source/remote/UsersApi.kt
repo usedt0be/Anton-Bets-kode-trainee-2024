@@ -1,7 +1,6 @@
 package com.example.users.data.source.remote
 
 import com.example.users.data.dto.ResultsDto
-import com.example.users.data.dto.UsersDto
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query

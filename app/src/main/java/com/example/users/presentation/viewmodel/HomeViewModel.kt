@@ -4,9 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.users.data.mappers.toUsers
 import com.example.users.data.repository.UsersRepositoryImpl
-import com.example.users.data.source.local.UsersEntity
 import com.example.users.domain.usecases.GetUsersFromDbUseCase
-import com.example.users.presentation.Users
+import com.example.users.presentation.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +21,7 @@ class HomeViewModel @Inject constructor(
 
     private val getUsersFromDbUseCase = GetUsersFromDbUseCase(repositoryImpl)
 
-    private val _usersList = MutableStateFlow<List<Users>>(emptyList())
+    private val _usersList = MutableStateFlow<List<User>>(emptyList())
     val usersList = _usersList
 
     init {

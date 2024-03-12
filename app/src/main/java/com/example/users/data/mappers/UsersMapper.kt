@@ -1,11 +1,11 @@
 package com.example.users.data.mappers
 
-import com.example.users.data.dto.UsersDto
-import com.example.users.data.source.local.UsersEntity
-import com.example.users.presentation.Users
+import com.example.users.data.dto.UserDto
+import com.example.users.data.source.local.UserEntity
+import com.example.users.presentation.User
 
-fun UsersDto.toUsersEntity(): UsersEntity {
-    return UsersEntity(
+fun UserDto.toUsersEntity(): UserEntity {
+    return UserEntity(
         id = id,
         avatarUrl = avatarUrl,
         firstName = firstName,
@@ -20,8 +20,8 @@ fun UsersDto.toUsersEntity(): UsersEntity {
 
 
 
-fun UsersEntity.toUsers(): Users {
-    return Users(
+fun UserEntity.toUsers(): User {
+    return User(
         id = id,
         avatarUrl = avatarUrl,
         firstName = firstName,
