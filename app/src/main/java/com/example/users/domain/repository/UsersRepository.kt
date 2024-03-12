@@ -1,8 +1,12 @@
 package com.example.users.domain.repository
 
+import com.example.users.data.source.local.UsersEntity
 import com.example.users.domain.entity.ResultsEntity
-import com.example.users.domain.entity.UsersEntity
+import kotlinx.coroutines.flow.Flow
+
 
 interface UsersRepository {
-    suspend fun getUsers(): ResultsEntity
+
+    suspend fun getUsersFromDb(): Flow<List<UsersEntity>>
+    suspend fun isDatabaseEmpty(): Boolean
 }

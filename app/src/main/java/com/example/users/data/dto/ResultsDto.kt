@@ -7,5 +7,5 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class ResultsDto(
     @Json(name = "items")
-    override val results: List<UsersDto>
+    override val items: List<UsersDto>
 ): ResultsEntity
