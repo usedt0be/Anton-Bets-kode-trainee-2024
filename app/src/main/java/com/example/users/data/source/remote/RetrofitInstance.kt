@@ -2,6 +2,7 @@ package com.example.users.data.source.remote
 
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.create
 import javax.inject.Inject
 
 class RetrofitInstance @Inject constructor() {
@@ -11,7 +12,10 @@ class RetrofitInstance @Inject constructor() {
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
 
+
         val usersApi: UsersApi = retrofit.create(UsersApi::class.java)
     }
+
+
 
 }
