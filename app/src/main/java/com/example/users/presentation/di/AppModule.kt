@@ -34,5 +34,4 @@ class AppModule {
     fun provideUsersDatabase(context: Application): UsersDatabase {
        return  UsersDatabase.getInstance(context)
     }
-
 }
