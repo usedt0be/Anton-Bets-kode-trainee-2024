@@ -1,6 +1,11 @@
 package com.example.users.presentation.di
 
+import android.app.Application
 import com.example.users.data.repository.UsersRepositoryImpl
+import com.example.users.data.source.local.UsersDao
+import com.example.users.data.source.local.UsersDatabase
+import com.example.users.data.source.remote.RetrofitInstance
+import com.example.users.data.source.remote.UsersApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,9 +18,20 @@ import javax.inject.Singleton
 class AppModule {
     @Singleton
     @Provides
-    fun provideUsersRepository(): UsersRepositoryImpl {
-        return UsersRepositoryImpl()
+    fun provideUsersRepository(usersDao: UsersDao): UsersRepositoryImpl {
+        return UsersRepositoryImpl(usersDao = usersDao, usersApi = RetrofitInstance.usersApi)
+    }
+
+    @Singleton
+    @Provides
+    fun provideUsersDao(usersDatabase: UsersDatabase): UsersDao {
+        return usersDatabase.usersDao
     }
 
 
+    @Singleton
+    @Provides
+    fun provideUsersDatabase(context: Application): UsersDatabase {
+       return  UsersDatabase.getInstance(context)
+    }
 }
