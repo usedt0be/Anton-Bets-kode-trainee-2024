@@ -23,6 +23,13 @@ val Typography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
+    h5  = TextStyle(
+        fontFamily = inter,
+        fontWeight = FontWeight.W600,
+        lineHeight = 18.sp,
+        fontSize = 14.sp,
+        color = Color(0XFF6534FF)
+    ),
     h6 = TextStyle(
         fontFamily = inter,
         fontWeight = FontWeight.W500,
@@ -36,6 +43,13 @@ val Typography = Typography(
         fontSize = 14.sp,
         color = Color(0XFF97979B)
     ),
+    subtitle2 = TextStyle(
+        fontFamily = inter,
+        fontWeight = FontWeight.W500,
+        lineHeight = 20.sp,
+        fontSize = 15.sp,
+        color = Color(0XFFC3C3C6)
+    ),
     caption = TextStyle(
         fontFamily = inter,
         fontWeight = FontWeight.W400,
@@ -43,20 +57,5 @@ val Typography = Typography(
         fontSize = 13.sp,
         color = Color(0XFF55555C)
     )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-    */
+
 )
