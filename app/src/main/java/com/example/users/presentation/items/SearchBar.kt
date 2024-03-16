@@ -2,29 +2,21 @@ package com.example.users.presentation.items
 
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,12 +29,8 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.users.R
 import com.example.users.presentation.viewmodel.HomeViewModel
 
@@ -72,18 +60,20 @@ fun SearchBar(modifier: Modifier, homeViewModel: HomeViewModel) {
                 homeViewModel.findUser(query.trim())
             },
             leadingIcon = {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.search),
-                        contentDescription = "search button"
-                    )
-                }
+                Icon(
+                    painter = painterResource(id = R.drawable.search_is_active),
+                    contentDescription = "cancel button",
+                    tint = if (isActive) MaterialTheme.colors.primaryVariant
+                    else MaterialTheme.colors.onSurface
+                )
             },
             placeholder = {
-                Text(
-                    text = "Введите имя, тег, почту...",
-                    style = MaterialTheme.typography.h5
+                if(!isActive) {
+                    Text(
+                        text = "Введите имя, тег, почту...",
+                        style = MaterialTheme.typography.subtitle2
                     )
+                }
             },
             modifier = Modifier
                 .height(40.dp)
@@ -99,21 +89,24 @@ fun SearchBar(modifier: Modifier, homeViewModel: HomeViewModel) {
             colors = TextFieldDefaults.textFieldColors(
                 unfocusedIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
-                cursorColor = Color(0XFF6534FF)
+                cursorColor = MaterialTheme.colors.primary,
+                backgroundColor = MaterialTheme.colors.surface
             ),
             trailingIcon = {
                 if (isActive) {
                     IconButton(onClick = { query = "" }) {
                         Icon(
                             painter = painterResource(id = R.drawable.cancel),
-                            contentDescription = "cancel button"
+                            contentDescription = "cancel button",
+                            tint = MaterialTheme.colors.onSurface
                         )
                     }
                 } else {
                     IconButton(onClick = { /*TODO*/ }) {
                         Icon(
                             painter = painterResource(id = R.drawable.list_ui_alt),
-                            contentDescription = "filter button"
+                            contentDescription = "filter button",
+                            tint = MaterialTheme.colors.onSurface
                         )
                     }
                 }

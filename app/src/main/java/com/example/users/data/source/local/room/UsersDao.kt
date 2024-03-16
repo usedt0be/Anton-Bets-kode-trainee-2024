@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UsersDao {
-
     @Query("SELECT * FROM Users")
     fun getAllUsers(): Flow<List<UserEntity>>
 
@@ -21,11 +20,11 @@ interface UsersDao {
     @Query("SELECT COUNT(*) FROM Users")
     suspend fun getRowCount(): Int
 
-
     @Query("""
         SELECT * FROM Users
         JOIN Users_fts ON Users_fts.id == Users.id
         WHERE Users_fts.firstName MATCH :query
+        OR Users_fts.lastName MATCH :query
         OR Users_fts.userTag MATCH :query
     """)
     fun foundUsers(query: String): Flow<List<UserEntity>>

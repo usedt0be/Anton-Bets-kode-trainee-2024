@@ -11,8 +11,8 @@ import androidx.compose.ui.unit.sp
 import com.example.users.R
 
 val inter = FontFamily(
-    Font(R.font.inter_medium, FontWeight.W500)
-
+    Font(R.font.inter_medium, FontWeight.W500),
+    Font(R.font.inter_semibold, FontWeight.SemiBold)
 )
 val Typography = Typography(
 
@@ -25,7 +25,7 @@ val Typography = Typography(
     ),
     h5  = TextStyle(
         fontFamily = inter,
-        fontWeight = FontWeight.W600,
+        fontWeight = FontWeight.SemiBold,
         lineHeight = 18.sp,
         fontSize = 14.sp,
         color = Color(0XFF6534FF)
