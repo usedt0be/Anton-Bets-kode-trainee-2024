@@ -1,4 +1,4 @@
-package com.example.users.data.source.local
+package com.example.users.data.source.local.room
 
 import androidx.room.Dao
 import androidx.room.Query
@@ -13,7 +13,8 @@ interface UsersDao {
     fun getAllUsers(): Flow<List<UserEntity>>
 
     @Upsert
-    suspend fun upsertAll (users: List<UserEntity>)
+    suspend fun upsertAll(users: List<UserEntity>)
+
     @Query("DELETE FROM Users")
     suspend fun clearAll()
 
@@ -21,5 +22,12 @@ interface UsersDao {
     suspend fun getRowCount(): Int
 
 
+    @Query("""
+        SELECT * FROM Users
+        JOIN Users_fts ON Users_fts.id == Users.id
+        WHERE Users_fts.firstName MATCH :query
+        OR Users_fts.userTag MATCH :query
+    """)
+    fun foundUsers(query: String): Flow<List<UserEntity>>
 
 }

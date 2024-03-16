@@ -26,7 +26,10 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
     Scaffold(
         modifier = Modifier.padding(start = 16.dp, top = 6.dp, end = 16.dp),
         topBar = {
-            SearchBar(modifier = Modifier.padding(start = 16.dp,top = 6.dp ,end = 6.dp,))
+            SearchBar(
+                modifier = Modifier.padding(start = 16.dp,top = 6.dp ,end = 6.dp,),
+                homeViewModel = homeViewModel
+            )
         }
     ) { paddingValues ->
         Column(
@@ -38,7 +41,6 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize(),
-//                    .padding(start = 16.dp, top = 156.dp, end = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 items(users) { user ->

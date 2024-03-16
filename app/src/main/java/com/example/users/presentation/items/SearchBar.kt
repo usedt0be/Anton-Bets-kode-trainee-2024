@@ -44,10 +44,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.users.R
+import com.example.users.presentation.viewmodel.HomeViewModel
 
 
 @Composable
-fun SearchBar(modifier: Modifier) {
+fun SearchBar(modifier: Modifier, homeViewModel: HomeViewModel) {
     var query by remember {
         mutableStateOf("")
     }
@@ -68,6 +69,7 @@ fun SearchBar(modifier: Modifier) {
             value = query,
             onValueChange = {
                 query = it
+                homeViewModel.findUser(query.trim())
             },
             leadingIcon = {
                 IconButton(onClick = { /*TODO*/ }) {
@@ -140,8 +142,8 @@ fun SearchBar(modifier: Modifier) {
 
 
 
-@Preview
-@Composable
-fun SearchBarPreview() {
-    SearchBar(modifier = Modifier)
-}
+//@Preview
+//@Composable
+//fun SearchBarPreview() {
+//    SearchBar(modifier = Modifier)
+//}
