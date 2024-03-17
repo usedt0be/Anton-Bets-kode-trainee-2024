@@ -11,8 +11,8 @@ import androidx.compose.ui.unit.sp
 import com.example.users.R
 
 val inter = FontFamily(
-    Font(R.font.inter_medium, FontWeight.W500)
-
+    Font(R.font.inter_medium, FontWeight.W500) ,
+    Font(R.font.inter_semibold, FontWeight.SemiBold)
 )
 val Typography = Typography(
 
@@ -22,6 +22,13 @@ val Typography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
+    ),
+    h4  = TextStyle(
+        fontFamily = inter,
+        fontWeight = FontWeight.SemiBold,
+        lineHeight = 20.sp,
+        fontSize = 15.sp,
+        color = Color(0XFF050510)
     ),
     h6 = TextStyle(
         fontFamily = inter,
@@ -36,6 +43,14 @@ val Typography = Typography(
         fontSize = 14.sp,
         color = Color(0XFF97979B)
     ),
+    subtitle2 = TextStyle(
+        fontFamily = inter,
+        fontWeight = FontWeight.W500,
+        lineHeight = 20.sp,
+        fontSize = 15.sp,
+        color = Color(0XFF97979B)
+    ),
+
     caption = TextStyle(
         fontFamily = inter,
         fontWeight = FontWeight.W400,
@@ -43,20 +58,4 @@ val Typography = Typography(
         fontSize = 13.sp,
         color = Color(0XFF55555C)
     )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-    */
 )
