@@ -2,10 +2,9 @@ package com.example.users.data.source.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.squareup.moshi.Json
 
 @Entity(tableName = "Users")
-data class UsersEntity(
+data class UserEntity(
     @PrimaryKey(autoGenerate = true)
     val roomId: Long? = null,
 

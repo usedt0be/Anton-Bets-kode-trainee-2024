@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.Flow
 interface UsersDao {
 
     @Query("SELECT * FROM Users")
-    fun getAllUsers(): Flow<List<UsersEntity>>
+    fun getAllUsers(): Flow<List<UserEntity>>
 
     @Upsert
-    suspend fun upsertAll (users: List<UsersEntity>)
+    suspend fun upsertAll (users: List<UserEntity>)
     @Query("DELETE FROM Users")
     suspend fun clearAll()
 

@@ -1,6 +1,6 @@
 package com.example.users.presentation
 
-data class Users(
+data class User(
     val id: String,
     val avatarUrl: String,
     val firstName: String,
