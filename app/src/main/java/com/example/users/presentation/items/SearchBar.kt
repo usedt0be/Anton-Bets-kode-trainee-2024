@@ -19,6 +19,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,17 +30,24 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.users.R
+import com.example.users.data.repository.UsersRepositoryImpl
+import com.example.users.data.source.local.room.UsersDao
+import com.example.users.data.source.remote.UsersApi
 import com.example.users.presentation.viewmodel.HomeViewModel
+import com.example.users.ui.theme.inter
 
 
 @Composable
-fun SearchBar(modifier: Modifier, homeViewModel: HomeViewModel) {
-    var query by remember {
-        mutableStateOf("")
-    }
+fun SearchBar(modifier: Modifier, searchUser:(String) -> Unit, query: MutableState<String>) {
+
+
     var isActive by remember {
         mutableStateOf(false)
     }
@@ -49,21 +57,27 @@ fun SearchBar(modifier: Modifier, homeViewModel: HomeViewModel) {
 
     val focusManager = LocalFocusManager.current
     Row(
-        modifier = Modifier,
+        modifier = Modifier.height(52.dp),
         verticalAlignment = Alignment.CenterVertically
     )
     {
         CustomTextField(
-            value = query,
+            value = query.value,
             onValueChange = {
-                query = it
-                homeViewModel.findUser(query.trim())
+                query.value = it
+                searchUser(query.value)
             },
+            textStyle = TextStyle(
+                fontFamily = inter,
+                fontWeight = FontWeight.W500,
+                fontSize = 15.sp,
+                lineHeight = 20.sp
+            ),
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.search_is_active),
                     contentDescription = "cancel button",
-                    tint = if (isActive) MaterialTheme.colors.primaryVariant
+                    tint = if (isActive) MaterialTheme.colors.onPrimary
                     else MaterialTheme.colors.onSurface
                 )
             },
@@ -89,12 +103,12 @@ fun SearchBar(modifier: Modifier, homeViewModel: HomeViewModel) {
             colors = TextFieldDefaults.textFieldColors(
                 unfocusedIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
-                cursorColor = MaterialTheme.colors.primary,
+                cursorColor = MaterialTheme.colors.primaryVariant,
                 backgroundColor = MaterialTheme.colors.surface
             ),
             trailingIcon = {
                 if (isActive) {
-                    IconButton(onClick = { query = "" }) {
+                    IconButton(onClick = { query.value = "" }) {
                         Icon(
                             painter = painterResource(id = R.drawable.cancel),
                             contentDescription = "cancel button",
@@ -135,8 +149,12 @@ fun SearchBar(modifier: Modifier, homeViewModel: HomeViewModel) {
 
 
 
-//@Preview
-//@Composable
-//fun SearchBarPreview() {
-//    SearchBar(modifier = Modifier)
-//}
+@Preview
+@Composable
+fun SearchBarPreview() {
+    SearchBar(
+        modifier = Modifier,
+        searchUser = {},
+        query = remember { mutableStateOf("") }
+    )
+}

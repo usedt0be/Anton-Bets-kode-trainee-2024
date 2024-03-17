@@ -10,6 +10,8 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.unit.dp
@@ -22,13 +24,17 @@ import com.example.users.presentation.viewmodel.HomeViewModel
 fun HomeScreen(homeViewModel: HomeViewModel) {
 
     val users = homeViewModel.usersList.collectAsState().value
+    val query = rememberSaveable {
+        mutableStateOf("")
+    }
 
     Scaffold(
         modifier = Modifier.padding(start = 16.dp, top = 6.dp, end = 16.dp),
         topBar = {
             SearchBar(
                 modifier = Modifier.padding(start = 16.dp,top = 6.dp ,end = 6.dp,),
-                homeViewModel = homeViewModel
+                query = query ,
+                searchUser = {homeViewModel.findUser(query.value)}
             )
         }
     ) { paddingValues ->
