@@ -1,8 +1,6 @@
 package com.example.users.ui.theme
-
 import androidx.compose.material.Typography
 import androidx.compose.ui.graphics.Color
-
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -22,6 +20,13 @@ val Typography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
+    ),
+    h4  = TextStyle(
+        fontFamily = inter,
+        fontWeight = FontWeight.SemiBold,
+        lineHeight = 20.sp,
+        fontSize = 15.sp,
+        color = Color(0XFF050510)
     ),
     h5  = TextStyle(
         fontFamily = inter,
@@ -48,8 +53,9 @@ val Typography = Typography(
         fontWeight = FontWeight.W500,
         lineHeight = 20.sp,
         fontSize = 15.sp,
-        color = Color(0XFFC3C3C6)
+        color = Color(0XFF97979B)
     ),
+
     caption = TextStyle(
         fontFamily = inter,
         fontWeight = FontWeight.W400,
@@ -57,5 +63,4 @@ val Typography = Typography(
         fontSize = 13.sp,
         color = Color(0XFF55555C)
     )
-
 )

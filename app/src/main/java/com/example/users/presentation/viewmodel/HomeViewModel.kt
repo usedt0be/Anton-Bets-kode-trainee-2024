@@ -33,8 +33,6 @@ class HomeViewModel @Inject constructor(
     }
 
 
-
-
     private fun getUsersFromDb() {
         viewModelScope.launch(Dispatchers.IO) {
             val usersFlow = getUsersFromDbUseCase.execute()
