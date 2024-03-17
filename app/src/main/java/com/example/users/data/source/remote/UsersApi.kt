@@ -6,7 +6,6 @@ import retrofit2.http.Headers
 import retrofit2.http.Query
 
 interface UsersApi {
-
     @Headers(
         "Accept: application/json",
         "Content-type: application/json",

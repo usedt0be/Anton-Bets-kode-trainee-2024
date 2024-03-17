@@ -2,10 +2,9 @@ package com.example.users.presentation.di
 
 import android.app.Application
 import com.example.users.data.repository.UsersRepositoryImpl
-import com.example.users.data.source.local.UsersDao
-import com.example.users.data.source.local.UsersDatabase
+import com.example.users.data.source.local.room.UsersDao
+import com.example.users.data.source.local.room.UsersDatabase
 import com.example.users.data.source.remote.RetrofitInstance
-import com.example.users.data.source.remote.UsersApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
