@@ -23,21 +23,11 @@ private val LightColors= lightColors(
     error = Color(0xffF44336)
 )
 
-//private val LightColors= lightColors(
-//    primary = Color(0xff6534FF),
-//    primaryVariant = Color(0xff050510),
-//    secondary = Color(0xff97979B),
-//    secondaryVariant = Color(0xff55555C),
-//    background = Color(0xffFFFFFFF),
-//    surface = Color(0xffF7F7F8),
-//    onSurface = Color(0xffC3C3C6) ,
-//    error = Color(0xffF44336)
-//)
 
 @Composable
 fun UsersTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
