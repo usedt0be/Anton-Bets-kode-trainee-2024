@@ -1,7 +1,7 @@
 package com.example.users.data.mappers
 
 import com.example.users.data.dto.UserDto
-import com.example.users.data.source.local.UserEntity
+import com.example.users.data.source.local.room.UserEntity
 import com.example.users.presentation.User
 
 fun UserDto.toUsersEntity(): UserEntity {

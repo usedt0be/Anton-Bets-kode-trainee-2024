@@ -3,8 +3,8 @@ package com.example.users.data.repository
 
 import android.util.Log
 import com.example.users.data.mappers.toUsersEntity
-import com.example.users.data.source.local.UsersDao
-import com.example.users.data.source.local.UserEntity
+import com.example.users.data.source.local.room.UsersDao
+import com.example.users.data.source.local.room.UserEntity
 import com.example.users.data.source.remote.UsersApi
 import com.example.users.domain.repository.UsersRepository
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 class UsersRepositoryImpl @Inject constructor(
     private  val usersDao: UsersDao,
-   private val usersApi: UsersApi
+    private val usersApi: UsersApi
 ): UsersRepository {
 
     override suspend fun getUsersFromDb(): Flow<List<UserEntity>>  {
@@ -36,10 +36,13 @@ class UsersRepositoryImpl @Inject constructor(
 
 
 
-
     override suspend fun isDatabaseEmpty(): Boolean {
         val rowCount = usersDao.getRowCount()
         return rowCount == 0
+    }
+
+    override fun findUsers(query: String): Flow<List<UserEntity>> {
+        return usersDao.foundUsers(query)
     }
 
 }
