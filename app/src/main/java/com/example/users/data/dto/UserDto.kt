@@ -1,6 +1,6 @@
 package com.example.users.data.dto
 
-import com.example.users.domain.entity.UsersEntity
+import com.example.users.domain.entity.UsersDtoEntity
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -24,4 +24,4 @@ data class UserDto(
     override val birthday: String,
     @Json(name= "phone")
     override val phone: String
-):UsersEntity
+):UsersDtoEntity

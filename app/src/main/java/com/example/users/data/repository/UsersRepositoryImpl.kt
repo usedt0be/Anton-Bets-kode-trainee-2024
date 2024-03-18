@@ -19,6 +19,11 @@ class UsersRepositoryImpl @Inject constructor(
     private  val usersDao: UsersDao,
     private val usersApi: UsersApi
 ): UsersRepository {
+    override suspend fun getUsersWithoutInternet(): Flow<List<UserEntity>> {
+        return flow {
+            emitAll(usersDao.getAllUsers())
+        }.flowOn(Dispatchers.IO)
+    }
 
     override suspend fun getUsersFromDb(): Flow<List<UserEntity>>  {
         val preloadedUsers = usersApi.getUsers().items
@@ -36,6 +41,7 @@ class UsersRepositoryImpl @Inject constructor(
 
 
 
+
     override suspend fun isDatabaseEmpty(): Boolean {
         val rowCount = usersDao.getRowCount()
         return rowCount == 0
@@ -44,5 +50,15 @@ class UsersRepositoryImpl @Inject constructor(
     override fun findUsers(query: String): Flow<List<UserEntity>> {
         return usersDao.foundUsers(query)
     }
+
+    override suspend fun refreshUsers(): Flow<List<UserEntity>> {
+        val newUsers = usersApi.getUsers().items
+        usersDao.clearAll()
+        usersDao.upsertAll(users = newUsers.map { it.toUsersEntity() })
+        return flow{
+           emitAll( usersDao.getAllUsers())
+        }.flowOn(Dispatchers.IO)
+    }
+
 
 }

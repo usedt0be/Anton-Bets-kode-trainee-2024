@@ -45,9 +45,7 @@ import com.example.users.ui.theme.inter
 
 
 @Composable
-fun SearchBar(modifier: Modifier, searchUser:(String) -> Unit, query: MutableState<String>) {
-
-
+fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
     var isActive by remember {
         mutableStateOf(false)
     }
@@ -153,7 +151,6 @@ fun SearchBar(modifier: Modifier, searchUser:(String) -> Unit, query: MutableSta
 @Composable
 fun SearchBarPreview() {
     SearchBar(
-        modifier = Modifier,
         searchUser = {},
         query = remember { mutableStateOf("") }
     )
