@@ -106,7 +106,10 @@ fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
             ),
             trailingIcon = {
                 if (isActive) {
-                    IconButton(onClick = { query.value = "" }) {
+                    IconButton(onClick = {
+                        query.value = ""
+                        searchUser("")
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.cancel),
                             contentDescription = "cancel button",
@@ -134,6 +137,8 @@ fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
                 text = "Отмена",
                 modifier = Modifier
                     .clickable {
+                        query.value = ""
+                        searchUser("")
                         focusManager.clearFocus()
                         isActive = false
                     }

@@ -87,14 +87,15 @@ class HomeViewModel @Inject constructor(
     fun findUser(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val foundUsers = if (query.isBlank()) {
-                repositoryImpl.getUsersFromDb()
+                getUsersWithoutInternetUseCase.execute()
             } else {
                 try {
                     repositoryImpl.findUsers("*$query*")
                 } catch (e:SQLiteException) {
-                    repositoryImpl.getUsersFromDb()
+                    getUsersWithoutInternetUseCase.execute()
                 }
             }
+            Log.d("blank", "${query.isBlank()}")
             updateUiWithUsers(foundUsers)
         }
     }
@@ -121,7 +122,6 @@ class HomeViewModel @Inject constructor(
                         _usersList.value = users.map { it.toUsers() }
                     }
                     isRefreshing.value = false
-
                 }
             }catch (e: UnknownHostException) {
                 Log.d("updateErr", "$e")

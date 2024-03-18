@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -22,7 +21,6 @@ import androidx.compose.material.Tab
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.Text
-import androidx.compose.material.contentColorFor
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -33,18 +31,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.example.users.presentation.items.SearchBar
 import com.example.users.presentation.items.UpdateErrorMessage
 import com.example.users.presentation.items.UserItem
 import com.example.users.presentation.items.tabItems
 import com.example.users.presentation.viewmodel.HomeViewModel
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
@@ -88,6 +85,7 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
                         query = query,
                         searchUser = { homeViewModel.findUser(query.value) }
                     )
+                    Log.d("querr","${query.value}")
                 }
                 ScrollableTabRow(
                     selectedTabIndex = selectedTabIndex,
@@ -122,7 +120,7 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
         },
         snackbarHost = {
             SnackbarHost(hostState = snackBarHostState ) {data ->
-                UpdateErrorMessage(data = data)
+                UpdateErrorMessage(message = data.message)
             }
         }
     )
@@ -175,10 +173,8 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
                 refreshing = refreshing,
                 state = refreshState,
                 modifier = Modifier.align(Alignment.TopCenter),
-                backgroundColor = MaterialTheme.colors.primaryVariant,
-                contentColorFor(backgroundColor = MaterialTheme.colors.primaryVariant)
+                backgroundColor = MaterialTheme.colors.secondary
             )
-
         }
 
     }
