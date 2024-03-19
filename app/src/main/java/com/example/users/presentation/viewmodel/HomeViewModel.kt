@@ -1,6 +1,7 @@
 package com.example.users.presentation.viewmodel
 
 import android.database.sqlite.SQLiteException
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.users.data.mappers.toUsers
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-       private val repositoryImpl: UsersRepositoryImpl
+       private val repositoryImpl: UsersRepositoryImpl,
+    val savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
 
@@ -32,7 +34,9 @@ class HomeViewModel @Inject constructor(
         getUsersFromDb()
     }
 
-
+    fun dd() {
+        savedStateHandle.get<Int>("userId")
+    }
     private fun getUsersFromDb() {
         viewModelScope.launch(Dispatchers.IO) {
             val usersFlow = getUsersFromDbUseCase.execute()

@@ -2,6 +2,7 @@ package com.example.users.presentation.items
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,13 +31,16 @@ import com.example.users.presentation.User
 
 
 @Composable
-fun UserItem(user: User) {
+fun UserItem(modifier: Modifier,user: User, onClick: () -> Unit) {
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .background(color = MaterialTheme.colors.background),
+            .background(color = MaterialTheme.colors.background)
+            .clickable {
+                    onClick()
+            },
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
 
@@ -97,18 +101,20 @@ fun UserItem(user: User) {
 }
 
 
-@Preview
-@Composable
-fun UserItemPreview() {
-    UserItem(user = User(
-        id = "1",
-        avatarUrl = "jlahlf",
-        firstName = "Алексей",
-        lastName = "Миногаров",
-        userTag = "mi",
-        department = "Analyst",
-        position = "1",
-        phone = "80787009",
-        birthday = "02.03.1982"
-    ))
-}
+//@Preview
+//@Composable
+//fun UserItemPreview() {
+//    UserItem(
+//        modifier = Modifier,
+//        user = User(
+//        id = "1",
+//        avatarUrl = "jlahlf",
+//        firstName = "Алексей",
+//        lastName = "Миногаров",
+//        userTag = "mi",
+//        department = "Analyst",
+//        position = "1",
+//        phone = "80787009",
+//        birthday = "02.03.1982"
+//    ))
+//}

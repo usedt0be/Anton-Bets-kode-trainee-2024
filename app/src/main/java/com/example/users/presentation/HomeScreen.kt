@@ -1,5 +1,6 @@
 package com.example.users.presentation
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,15 +28,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.users.presentation.items.SearchBar
 import com.example.users.presentation.items.UserItem
 import com.example.users.presentation.items.tabItems
+import com.example.users.presentation.util.Screens
 import com.example.users.presentation.viewmodel.HomeViewModel
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(homeViewModel: HomeViewModel) {
+fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
 
     val users = homeViewModel.usersList.collectAsState().value
     val query = rememberSaveable {
@@ -126,7 +129,16 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     items(filteredUsers) { user ->
-                        UserItem(user = user)
+                        UserItem(
+                            user = user,
+                            modifier = Modifier,
+                            onClick = {
+                                navController.navigate(
+                                    Screens.UsersScreen.route +
+                                            "?userId=${user.id}&avatarUrl=${user.avatarUrl}&firstName=${user.firstName}&lastName=${user.lastName}&userTag=${user.userTag}&department=${user.department}&birthday=${user.birthday}&phone=${user.phone}"
+                                )
+                            }
+                        )
                     }
                 }
             }

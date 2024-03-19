@@ -35,7 +35,6 @@ class UsersRepositoryImpl @Inject constructor(
     }
 
 
-
     override suspend fun isDatabaseEmpty(): Boolean {
         val rowCount = usersDao.getRowCount()
         return rowCount == 0
