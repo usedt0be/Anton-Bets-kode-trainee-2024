@@ -1,7 +1,7 @@
 package com.example.users.domain.usecases
 
 import com.example.users.data.repository.UsersRepositoryImpl
-import com.example.users.data.source.local.UserEntity
+import com.example.users.data.source.local.room.UserEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
