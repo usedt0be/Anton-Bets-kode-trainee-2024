@@ -51,7 +51,7 @@ class HomeViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
 
-    private val _refreshingFailed = mutableStateOf(false)
+    private val _refreshingFailed =  MutableStateFlow(false)
     val refreshingFailed = _refreshingFailed
 
     private fun getUsers() {
@@ -96,6 +96,7 @@ class HomeViewModel @Inject constructor(
                 }
             }
             Log.d("blank", "${query.isBlank()}")
+            Log.d("blank", "${foundUsers}")
             updateUiWithUsers(foundUsers)
         }
     }
@@ -104,6 +105,7 @@ class HomeViewModel @Inject constructor(
     private fun updateUiWithUsers(foundUsers: Flow<List<UserEntity>>) {
         viewModelScope.launch(Dispatchers.IO) {
                 foundUsers.collect { listOfUsers ->
+                    Log.d("searchedusers", "${listOfUsers}")
                     _usersList.value = listOfUsers.map { it.toUsers() }
                 }
         }
@@ -124,9 +126,10 @@ class HomeViewModel @Inject constructor(
                     isRefreshing.value = false
                 }
             }catch (e: UnknownHostException) {
+                _refreshingFailed.value = true
                 Log.d("updateErr", "$e")
                 _isRefreshing.value = false
-                _refreshingFailed.value = true
+
             }
         }
 

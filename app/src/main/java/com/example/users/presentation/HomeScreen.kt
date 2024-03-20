@@ -35,7 +35,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.example.users.presentation.items.SearchBar
 import com.example.users.presentation.items.UpdateErrorMessage
@@ -64,7 +63,7 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
 
     val refreshing by homeViewModel.isRefreshing.collectAsState()
 
-    val refreshingFailed = homeViewModel.refreshingFailed.value
+    val refreshingFailed = homeViewModel.refreshingFailed.collectAsState().value
     Log.d("isref", "$refreshingFailed")
 
 
@@ -80,12 +79,12 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
     Scaffold(
         topBar = {
             Column {
-                Box(Modifier.padding(start = 16.dp, top = 6.dp, end = 16.dp)) {
+                Box(Modifier.padding(start = 16.dp, top = 6.dp, end = 16.dp)
+                    ) {
                     SearchBar(
                         query = query,
                         searchUser = { homeViewModel.findUser(query.value) }
                     )
-                    Log.d("querr","${query.value}")
                 }
                 ScrollableTabRow(
                     selectedTabIndex = selectedTabIndex,
@@ -168,6 +167,7 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
                                 "Проверь соединение с интернетом.")
                     }
                 }
+
             }
             PullRefreshIndicator(
                 refreshing = refreshing,
@@ -176,7 +176,6 @@ fun HomeScreen(homeViewModel: HomeViewModel) {
                 backgroundColor = MaterialTheme.colors.secondary
             )
         }
-
     }
 }
 

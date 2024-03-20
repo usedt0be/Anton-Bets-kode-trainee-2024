@@ -37,10 +37,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.users.R
-import com.example.users.data.repository.UsersRepositoryImpl
-import com.example.users.data.source.local.room.UsersDao
-import com.example.users.data.source.remote.UsersApi
-import com.example.users.presentation.viewmodel.HomeViewModel
 import com.example.users.ui.theme.inter
 
 
