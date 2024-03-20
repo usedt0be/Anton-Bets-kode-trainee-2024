@@ -180,6 +180,7 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
                             "Не могу обновить данные.\n" +
                                     "Проверь соединение с интернетом."
                         )
+
                     }
                 }
             }
