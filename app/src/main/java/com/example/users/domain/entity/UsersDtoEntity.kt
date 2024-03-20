@@ -1,8 +1,6 @@
 package com.example.users.domain.entity
 
-import java.util.Date
-
-interface UsersEntity {
+interface UsersDtoEntity {
     val id: String
     val avatarUrl: String
     val firstName: String

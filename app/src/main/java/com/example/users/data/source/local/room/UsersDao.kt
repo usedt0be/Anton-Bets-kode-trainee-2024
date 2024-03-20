@@ -1,6 +1,7 @@
 package com.example.users.data.source.local.room
 
 import androidx.room.Dao
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow

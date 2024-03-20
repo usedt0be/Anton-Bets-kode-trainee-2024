@@ -11,4 +11,8 @@ interface UsersRepository {
     suspend fun isDatabaseEmpty(): Boolean
 
     fun findUsers(query: String): Flow<List<UserEntity>>
+
+    suspend fun refreshUsers(): Flow<List<UserEntity>>
+
+    suspend fun getUsersWithoutInternet(): Flow<List<UserEntity>>
 }
