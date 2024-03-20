@@ -31,7 +31,7 @@ enum class STATE {
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-       private val repositoryImpl: UsersRepositoryImpl
+       private val repositoryImpl: UsersRepositoryImpl,
 ): ViewModel() {
 
 
@@ -47,6 +47,7 @@ class HomeViewModel @Inject constructor(
     init {
         getUsers()
     }
+
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
