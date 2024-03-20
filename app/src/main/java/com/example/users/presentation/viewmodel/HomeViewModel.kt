@@ -2,6 +2,9 @@ package com.example.users.presentation.viewmodel
 
 import android.database.sqlite.SQLiteException
 import android.util.Log
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -43,6 +46,10 @@ class HomeViewModel @Inject constructor(
 
     private val _usersList = MutableStateFlow<List<User>>(emptyList())
     val usersList = _usersList
+
+
+    private val _usersSortedAlphabetically = MutableStateFlow<List<User>>(emptyList())
+    val userSortedAlphabetically = _usersSortedAlphabetically
 
     init {
         getUsers()
@@ -133,5 +140,12 @@ class HomeViewModel @Inject constructor(
             }
         }
 
+    }
+
+    fun sortUsersByAlphabetically(users: List<User> ): MutableStateFlow<List<User>>  {
+        val sorted = users.sortedWith(compareBy({ it.firstName }, { it.lastName }))
+        Log.d("sortedusers", "$sorted")
+//        _usersSortedAlphabetically.value = sorted
+        return MutableStateFlow(sorted)
     }
 }

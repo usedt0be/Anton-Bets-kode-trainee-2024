@@ -13,8 +13,6 @@ import java.util.Calendar
 import java.util.Locale
 
 object Util {
-
-
     fun calculateAge(birthDate: String): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val dateOfBirth = sdf.parse(birthDate)
@@ -44,4 +42,6 @@ object Util {
         }
         context.startActivity(intent)
     }
+
+
 }

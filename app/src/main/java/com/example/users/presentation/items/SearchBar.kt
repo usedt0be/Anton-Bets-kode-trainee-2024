@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -40,8 +41,10 @@ import com.example.users.R
 import com.example.users.ui.theme.inter
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
+fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>, openSheet: () -> Unit) {
+
     var isActive by remember {
         mutableStateOf(false)
     }
@@ -50,6 +53,7 @@ fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
     val scale by animateFloatAsState(targetValue = if (isActive) 0.8f else 1.0f)
 
     val focusManager = LocalFocusManager.current
+
     Row(
         modifier = Modifier.height(52.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -113,7 +117,9 @@ fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
                         )
                     }
                 } else {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        openSheet()
+                    }) {
                         Icon(
                             painter = painterResource(id = R.drawable.list_ui_alt),
                             contentDescription = "filter button",
@@ -143,6 +149,8 @@ fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
                 style = MaterialTheme.typography.h5
             )
         }
+
+
     }
 }
 
@@ -153,6 +161,7 @@ fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
 fun SearchBarPreview() {
     SearchBar(
         searchUser = {},
-        query = remember { mutableStateOf("") }
+        query = remember { mutableStateOf("") },
+        openSheet = {},
     )
 }

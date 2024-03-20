@@ -16,16 +16,24 @@ val inter = FontFamily(
 )
 val Typography = Typography(
 
-    h2 = TextStyle(
-        fontFamily = FontFamily.Default,
+    h1 = TextStyle(
+        fontFamily = inter,
         fontWeight = FontWeight.W700,
-        fontSize = 24.sp,
-        lineHeight = 28.sp,
+        fontSize = 20.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp,
+        color = Color(0XFF050510)
+    ),
+    h2 = TextStyle(
+        fontFamily = inter,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp,
+        lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
         color = Color(0XFF050510)
     ),
     h3 = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = inter,
         fontWeight = FontWeight.W400,
         fontSize = 17.sp,
         lineHeight = 22.sp,
@@ -65,7 +73,6 @@ val Typography = Typography(
         fontSize = 15.sp,
         color = Color(0XFF97979B)
     ),
-
     caption = TextStyle(
         fontFamily = inter,
         fontWeight = FontWeight.W400,
