@@ -1,5 +1,6 @@
 package com.example.users.presentation.screens
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,8 +41,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.users.presentation.User
 import com.example.users.presentation.items.FilterBottomSheet
 import com.example.users.presentation.items.SearchBar
 import com.example.users.presentation.items.UpdateErrorMessage
@@ -56,19 +59,33 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
     val users = homeViewModel.usersList.collectAsState().value
+    Log.d("usrs", "$users")
 
-    var filteredAlphabetically by rememberSaveable {
-        mutableStateOf(false)
+
+    val fltralp by remember {
+        homeViewModel.filteredAlphabetically
     }
-    Log.d("alpUI", "$filteredAlphabetically")
+    Log.d("fltralp", "$fltralp")
+    Log.d("fltr", "${homeViewModel.filteredAlphabetically}")
 
-    val ysers = if (filteredAlphabetically) {
-        homeViewModel.sortUsersByAlphabetically(users).collectAsState().value
-    } else {
-        users
-    }
+        LaunchedEffect(fltralp) {
+            homeViewModel.sortUsersByAlphabetically(users)
+        }
 
-    Log.d("ysers", "$ysers")
+//    val ysers = if (filteredAlphabetically) {
+//        homeViewModel.sortUsersByAlphabetically(users)
+//    } else {
+//        users
+//    }
+//    Log.d("ysers", "$ysers")
+//    LaunchedEffect(fltralp) {
+//            homeViewModel.sortUsersByAlphabetically(users)
+//    }
+
+//    if(filteredAlphabetically) {
+//
+//    }
+
 
 
     val query = rememberSaveable { mutableStateOf("") }
@@ -175,6 +192,7 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
                             }
                         }
                     }
+
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
@@ -205,19 +223,17 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
                 }
 
             }
-
             PullRefreshIndicator(
                 refreshing = refreshing,
                 state = refreshState,
                 modifier = Modifier.align(Alignment.TopCenter),
                 backgroundColor = MaterialTheme.colors.secondary
             )
-
         }
         FilterBottomSheet(
             state = sheetState,
-            filteredAlphabetically = filteredAlphabetically,
-            alphabetFilterIsActive = {filteredAlphabetically = it}
+            filteredAlphabetically = fltralp,
+            alphabetFilterIsActive = {homeViewModel.filteredAlphabetically.value = it}
         )
     }
 }

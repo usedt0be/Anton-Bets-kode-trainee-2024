@@ -21,6 +21,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -37,19 +38,23 @@ class HomeViewModel @Inject constructor(
        private val repositoryImpl: UsersRepositoryImpl
 ): ViewModel() {
 
-
     private val getUsersFromDbUseCase = GetUsersFromDbUseCase(repositoryImpl)
     private val refreshUsersUseCase = RefreshUsersUseCase(repositoryImpl)
     private val getUsersWithoutInternetUseCase = GetUsersWithoutInternetUseCase(repositoryImpl)
 
     private var state by mutableStateOf(STATE.LOADING)
 
-    private val _usersList = MutableStateFlow<List<User>>(emptyList())
-    val usersList = _usersList
+    private var _usersList = MutableStateFlow<List<User>>(emptyList())
+    var usersList : StateFlow<List<User>> = _usersList
 
+    private var _notFilteredUsers = MutableStateFlow<List<User>>(emptyList())
+    var notFilteredUsers: StateFlow<List<User>> =  _notFilteredUsers
 
-    private val _usersSortedAlphabetically = MutableStateFlow<List<User>>(emptyList())
-    val userSortedAlphabetically = _usersSortedAlphabetically
+    private var _filteredAlphabetically = mutableStateOf(false )
+    var filteredAlphabetically = _filteredAlphabetically
+
+    private var _filteredByBirthday = mutableStateOf(false)
+    val filteredByBirthday = _filteredByBirthday
 
     init {
         getUsers()
@@ -66,12 +71,14 @@ class HomeViewModel @Inject constructor(
             try {
                 state = STATE.LOADING
                 val usersFlow = getUsersFromDbUseCase.execute()
-
                 usersFlow.collect { users ->
+                    val mappedUsers = users.map { it.toUsers() }
                     Log.d("userList", "$users")
                     withContext(Dispatchers.IO) {
-                        _usersList.value = users.map { it.toUsers() }
+                        _usersList.value = mappedUsers
+                        _notFilteredUsers.value = mappedUsers
                     }
+                    Log.d("usrsNF", "${_notFilteredUsers.value}")
                 }
                 state = STATE.SUCCESS
             } catch (e: Exception) {
@@ -79,9 +86,13 @@ class HomeViewModel @Inject constructor(
                 val usersFlow = getUsersWithoutInternetUseCase.execute()
                 usersFlow.collect { users ->
                     Log.d("internetOff", "$users")
-                    withContext(Dispatchers.Main) {
+//                    val mappedUsers = users.map { it.toUsers() }
+                    withContext(Dispatchers.IO) {
                         _usersList.value = users.map { it.toUsers() }
+                        _notFilteredUsers.value =users.map { it.toUsers() }
                     }
+                    Log.d("usrsN", "${_usersList.value}")
+                    Log.d("usrsNF", "${_notFilteredUsers.value}")
                     state = STATE.SUCCESS
                 }
             } catch (e: IOException) {
@@ -141,11 +152,30 @@ class HomeViewModel @Inject constructor(
         }
 
     }
+//    fun filterUser() {
+//        _usersList = if (filteredAlphabetically.value) {
+//            sortUsersByAlphabetically(users = usersList.value)
+//        } else {
+//            _notFilteredUsers
+//        }
+//
+//    }
 
-    fun sortUsersByAlphabetically(users: List<User> ): MutableStateFlow<List<User>>  {
-        val sorted = users.sortedWith(compareBy({ it.firstName }, { it.lastName }))
-        Log.d("sortedusers", "$sorted")
-//        _usersSortedAlphabetically.value = sorted
-        return MutableStateFlow(sorted)
+    fun sortUsersByAlphabetically(users: List<User>)  {
+        if(filteredAlphabetically.value) {
+            Log.d("fltrV", "${_filteredAlphabetically.value}")
+            viewModelScope.launch(Dispatchers.IO) {
+                val sorted = users.sortedWith(compareBy({ it.firstName }, { it.lastName }))
+                Log.d("sortedusers", "$sorted")
+                withContext(Dispatchers.Main) {
+                    _usersList.value = sorted
+                }
+            }
+        }
+        else {
+            viewModelScope.launch(Dispatchers.IO) {
+                _usersList.value = _notFilteredUsers.value
+            }
+        }
     }
 }
