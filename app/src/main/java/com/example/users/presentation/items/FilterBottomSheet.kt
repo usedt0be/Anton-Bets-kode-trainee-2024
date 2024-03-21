@@ -35,15 +35,20 @@ import kotlinx.coroutines.launch
 fun FilterBottomSheet(
     state: ModalBottomSheetState,
     filteredAlphabetically: Boolean,
-     alphabetFilterIsActive:(Boolean) -> Unit
+    alphabetFilterIsActive:(Boolean) -> Unit,
+    filteredByBirthday: Boolean,
+    birthdayFilterIsActive:(Boolean) -> Unit
 )  {
 
     val scope = rememberCoroutineScope()
 
-    var isActive by remember {
+    var alphabetFilter by remember {
         mutableStateOf(filteredAlphabetically)
     }
 
+    var birthdayFilter by remember {
+        mutableStateOf(filteredByBirthday)
+    }
 
     ModalBottomSheetLayout(
         sheetContent = {
@@ -72,10 +77,11 @@ fun FilterBottomSheet(
                     horizontalArrangement = Arrangement.Start
                 ) {
                     RadioButton(
-                        selected = isActive,
+                        selected = alphabetFilter,
                         onClick = {
-                           isActive = !isActive
-                            alphabetFilterIsActive(isActive)
+                            alphabetFilter = !alphabetFilter
+                            alphabetFilterIsActive(alphabetFilter)
+                            birthdayFilterIsActive(false)
                             scope.launch {
                                 state.hide()
                             }
@@ -98,10 +104,13 @@ fun FilterBottomSheet(
                     horizontalArrangement = Arrangement.Start
                 ) {
                     RadioButton(
-                        selected = false,
+                        selected = birthdayFilter,
                         onClick = {
+                            birthdayFilter = !birthdayFilter
+                            birthdayFilterIsActive(birthdayFilter)
+                            alphabetFilterIsActive(false)
                             scope.launch {
-
+                                state.hide()
                             }
                         },
                         modifier = Modifier.size(20.dp)
@@ -128,6 +137,8 @@ fun FilterBottomPreview() {
         state = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Expanded),
         filteredAlphabetically = true,
-        alphabetFilterIsActive = {}
+        alphabetFilterIsActive = {},
+        filteredByBirthday = true,
+        birthdayFilterIsActive = {}
     )
 }

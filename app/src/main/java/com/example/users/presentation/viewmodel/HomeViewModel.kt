@@ -17,6 +17,9 @@ import com.example.users.domain.usecases.GetUsersFromDbUseCase
 import com.example.users.domain.usecases.GetUsersWithoutInternetUseCase
 import com.example.users.domain.usecases.RefreshUsersUseCase
 import com.example.users.presentation.User
+import com.example.users.presentation.util.Extensions.toNextYearBirthdayList
+import com.example.users.presentation.util.Extensions.toThisBirthdayYearList
+import com.example.users.presentation.util.Util
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -50,11 +53,16 @@ class HomeViewModel @Inject constructor(
     private var _notFilteredUsers = MutableStateFlow<List<User>>(emptyList())
     var notFilteredUsers: StateFlow<List<User>> =  _notFilteredUsers
 
-    private var _filteredAlphabetically = mutableStateOf(false )
+    private var _filteredAlphabetically = mutableStateOf(false)
     var filteredAlphabetically = _filteredAlphabetically
 
     private var _filteredByBirthday = mutableStateOf(false)
     val filteredByBirthday = _filteredByBirthday
+
+
+    private val _filteredByBirthdayUsers = MutableStateFlow<Map<String,List<User>>>(emptyMap())
+    val filteredByBirthdayUsers = _filteredByBirthdayUsers
+
 
     init {
         getUsers()
@@ -152,14 +160,7 @@ class HomeViewModel @Inject constructor(
         }
 
     }
-//    fun filterUser() {
-//        _usersList = if (filteredAlphabetically.value) {
-//            sortUsersByAlphabetically(users = usersList.value)
-//        } else {
-//            _notFilteredUsers
-//        }
-//
-//    }
+
 
     fun sortUsersByAlphabetically(users: List<User>)  {
         if(filteredAlphabetically.value) {
@@ -173,6 +174,23 @@ class HomeViewModel @Inject constructor(
             }
         }
         else {
+            viewModelScope.launch(Dispatchers.IO) {
+                _usersList.value = _notFilteredUsers.value
+            }
+        }
+    }
+
+    fun filterUsersByBirthDay(users: List<User>) {
+        if (filteredByBirthday.value) {
+            Log.d("fltrV", "${_filteredByBirthday.value}")
+            viewModelScope.launch(Dispatchers.IO) {
+                val sorted = users.toThisBirthdayYearList() + users.toNextYearBirthdayList()
+                Log.d("sortedbrth", "$sorted")
+                withContext(Dispatchers.Main) {
+                    _usersList.value = sorted
+                }
+            }
+        } else {
             viewModelScope.launch(Dispatchers.IO) {
                 _usersList.value = _notFilteredUsers.value
             }

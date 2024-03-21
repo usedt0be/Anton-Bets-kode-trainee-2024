@@ -48,25 +48,103 @@ object Util {
 
 
 
-    fun filterUsersByBirthday(users: List<User>, today: Calendar = Calendar.getInstance()) {
-        val currentYear = today.get(Calendar.YEAR)
+//    fun filterUsersByBirthday(
+//        users: List<User>,
+//        today: Calendar = Calendar.getInstance(),
+//        currentYear:Int = today.get(Calendar.YEAR)
+//    ):Map<String, List<User>> {
+//        val nextYear = currentYear + 1
+//        val birthdayThisYear = mutableListOf<User>()
+//        val birthdayNextYear = mutableListOf<User>()
+//        users.forEach { user ->
+//            val userBirthday = user.birthday.toCalendar()
+//
+//            val userBirthdayThisYear = userBirthday.clone() as Calendar
+//            userBirthdayThisYear.set(Calendar.YEAR, currentYear)
+//
+//            if (userBirthdayThisYear.before(today)) {
+//                birthdayNextYear.add(user)
+//            } else {
+//                birthdayThisYear.add(user)
+//            }
+//        }
+//
+//        val d = birthdayThisYear.sortedBy {
+//            it.birthday.toCalendar().get(Calendar.DAY_OF_YEAR)
+//        }
+//
+//        return mapOf(
+//            currentYear.toString() to birthdayThisYear.sortedBy {
+//                it.birthday.toCalendar().get(Calendar.DAY_OF_YEAR)
+//            },
+//            nextYear.toString() to birthdayThisYear.sortedBy {
+//                it.birthday.toCalendar().get(Calendar.DAY_OF_YEAR)
+//            }
+//        )
+//    }
 
-        val birthdayThisYear = mutableListOf<User>()
-        val birthdayNextYear = mutableListOf<User>()
 
-        users.forEach { user ->
-            val userBirthday = user.birthday.toCalendar()
+//    fun filterUsersByBirthday(
+//        users: List<User>,
+//        today: Calendar = Calendar.getInstance(),
+//        currentYear:Int = today.get(Calendar.YEAR)
+//    ):List<List<User>> {
+//        val nextYear = currentYear + 1
+//        val birthdayThisYear = mutableListOf<User>()
+//        val birthdayNextYear = mutableListOf<User>()
+//        users.forEach { user ->
+//            val userBirthday = user.birthday.toCalendar()
+//
+//            val userBirthdayThisYear = userBirthday.clone() as Calendar
+//            userBirthdayThisYear.set(Calendar.YEAR, currentYear)
+//
+//            if (userBirthdayThisYear.before(today)) {
+//                birthdayNextYear.add(user)
+//            } else {
+//                birthdayThisYear.add(user)
+//            }
+//        }
+//
+//        return listOf(
+//            birthdayThisYear.sortedBy {
+//                it.birthday.toCalendar().get(Calendar.DAY_OF_YEAR)
+//            },
+//            birthdayNextYear.sortedBy {
+//                it.birthday.toCalendar().get(Calendar.DAY_OF_YEAR)
+//            }
+//        )
+////        return mapOf(
+////            currentYear.toString() to birthdayThisYear.sortedBy {
+////                it.birthday.toCalendar().get(Calendar.DAY_OF_YEAR)
+////            },
+////            nextYear.toString() to birthdayThisYear.sortedBy {
+////                it.birthday.toCalendar().get(Calendar.DAY_OF_YEAR)
+////            }
+////        )
+//    }
 
-            val userBirthdayThisYear = userBirthday.clone() as Calendar
-            userBirthdayThisYear.set(Calendar.YEAR, currentYear)
-
-            if (userBirthdayThisYear.before(today)) {
-                birthdayNextYear.add(user)
-            } else {
-                birthdayThisYear.add(user)
-            }
-        }
-    }
+//    fun filterUsersByBirthday(
+//        users: List<User>,
+//        today: Calendar = Calendar.getInstance(),
+//        currentYear:Int = today.get(Calendar.YEAR)
+//    ):List<User> {
+//        val nextYear = currentYear + 1
+//        val birthdayThisYear = mutableListOf<User>()
+//        val birthdayNextYear = mutableListOf<User>()
+//        users.forEach { user ->
+//            val userBirthday = user.birthday.toCalendar()
+//
+//            val userBirthdayThisYear = userBirthday.clone() as Calendar
+//            userBirthdayThisYear.set(Calendar.YEAR, currentYear)
+//
+//            if (userBirthdayThisYear.before(today)) {
+//                birthdayNextYear.add(user)
+//            } else {
+//                birthdayThisYear.add(user)
+//            }
+//        }
+//
+//    }
 
 
 
