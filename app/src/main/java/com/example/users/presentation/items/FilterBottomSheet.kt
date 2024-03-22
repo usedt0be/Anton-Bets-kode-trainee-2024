@@ -33,118 +33,107 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+
 @Composable
 fun FilterBottomSheet(
-    state: ModalBottomSheetState,
+    hide:() -> Unit,
     filteredAlphabetically: Boolean,
     alphabetFilterIsActive:(Boolean) -> Unit,
     filteredByBirthday: Boolean,
-    birthdayFilterIsActive:(Boolean) -> Unit
-)  {
+    birthdayFilterIsActive:(Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
 
     val scope = rememberCoroutineScope()
+    var alphabetFilter by remember { mutableStateOf(filteredAlphabetically) }
+    var birthdayFilter by remember { mutableStateOf(filteredByBirthday) }
 
-    var alphabetFilter by remember {
-        mutableStateOf(filteredAlphabetically)
+    Column(modifier = Modifier
+        .height(218.dp)
+        .fillMaxWidth()
+        .padding(start = 16.dp, end = 16.dp)
+    ) {
+        Text(
+            text = "Сортировка",
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding( top = 24.dp),
+            style = MaterialTheme.typography.h2,
+            lineHeight = 24.sp,
+            fontWeight = FontWeight.W600,
+            fontSize = 20.sp
+        )
+
+        Row(
+            modifier = Modifier
+                .height(60.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            RadioButton(
+                selected = alphabetFilter,
+                onClick = {
+                    alphabetFilter = !alphabetFilter
+                    alphabetFilterIsActive(alphabetFilter)
+                    birthdayFilterIsActive(false)
+                    birthdayFilter = false
+                    scope.launch {
+                        hide()
+                    }
+                },
+                modifier = Modifier.size(20.dp)
+            )
+            Text(
+                text = " По алфавиту",
+                style = MaterialTheme.typography.h6,
+                lineHeight = 20.sp,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(start = 14.dp)
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp)
+                .height(60.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            RadioButton(
+                selected = birthdayFilter,
+                onClick = {
+                    birthdayFilter = !birthdayFilter
+                    birthdayFilterIsActive(birthdayFilter)
+                    alphabetFilter = false
+                    alphabetFilterIsActive(false)
+                    scope.launch {
+                        hide()
+                    }
+                },
+                modifier = Modifier.size(20.dp)
+            )
+            Text(
+                text = " По дню рождения",
+                style = MaterialTheme.typography.h6,
+                lineHeight = 20.sp,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(start = 14.dp)
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
     }
 
-    var birthdayFilter by remember {
-        mutableStateOf(filteredByBirthday)
-    }
-
-
-    ModalBottomSheetLayout(
-        sheetContent = {
-            Column(modifier = Modifier
-                .height(218.dp)
-                .fillMaxSize()
-            ) {
-                Text(
-                    text = "Сортировка",
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding( top = 24.dp),
-                    style = MaterialTheme.typography.h2,
-                    lineHeight = 24.sp,
-                    fontWeight = FontWeight.W600,
-                    fontSize = 20.sp
-                )
-
-                Row(
-                    modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                        .height(60.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    RadioButton(
-                        selected = alphabetFilter,
-                        onClick = {
-                            alphabetFilter = !alphabetFilter
-                            alphabetFilterIsActive(alphabetFilter)
-                            birthdayFilterIsActive(false)
-                            birthdayFilter = false
-                            scope.launch {
-                                state.hide()
-                            }
-                        },
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Text(
-                        text = " По алфавиту",
-                        style = MaterialTheme.typography.h6,
-                        lineHeight = 20.sp,
-                        fontSize = 16.sp,
-                        modifier = Modifier.padding(start = 14.dp)
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp)
-                        .height(60.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    RadioButton(
-                        selected = birthdayFilter,
-                        onClick = {
-                            birthdayFilter = !birthdayFilter
-                            birthdayFilterIsActive(birthdayFilter)
-                            alphabetFilter = false
-                            alphabetFilterIsActive(false)
-                            scope.launch {
-                                state.hide()
-                            }
-                        },
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Text(
-                        text = " По дню рождения",
-                        style = MaterialTheme.typography.h6,
-                        lineHeight = 20.sp,
-                        fontSize = 16.sp,
-                        modifier = Modifier.padding(start = 14.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
-            }
-        },
-        sheetState = state,
-        sheetBackgroundColor = MaterialTheme.colors.primary,
-        sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)
-        ) {}
 }
-@OptIn(ExperimentalMaterialApi::class)
+
+
 @Preview
 @Composable
 fun FilterBottomPreview() {
     FilterBottomSheet(
-        state = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Expanded),
         filteredAlphabetically = true,
         alphabetFilterIsActive = {},
         filteredByBirthday = true,
-        birthdayFilterIsActive = {}
+        birthdayFilterIsActive = {},
+        hide = {}
     )
 }

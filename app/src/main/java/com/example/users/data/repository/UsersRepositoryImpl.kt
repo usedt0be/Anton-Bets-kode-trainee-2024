@@ -27,9 +27,7 @@ class UsersRepositoryImpl @Inject constructor(
 
     override suspend fun getUsersFromDb(): Flow<List<UserEntity>>  {
         val preloadedUsers = usersApi.getUsers().items
-        Log.d("preloaded", "$preloadedUsers")
         return flow {
-            Log.d("DB_state","${isDatabaseEmpty()}")
             if(isDatabaseEmpty()) {
                 usersDao.upsertAll(preloadedUsers.map {it.toUsersEntity()})
                 emitAll(usersDao.getAllUsers())

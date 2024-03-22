@@ -22,10 +22,9 @@ import com.example.users.R
 @Composable
 fun NothingWasFoundBox(modifier:Modifier = Modifier) {
     Box(modifier = Modifier.fillMaxWidth()
-        .height(118.dp),
-        contentAlignment = Alignment.Center
+        .height(198.dp),
+        contentAlignment = Alignment.BottomCenter
     ) {
-        Spacer(modifier = Modifier.height(80.dp))
         Column {
             Image(
                 painter = painterResource(id = R.drawable.nothing_found),

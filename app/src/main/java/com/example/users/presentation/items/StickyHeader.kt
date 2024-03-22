@@ -28,13 +28,15 @@ fun StickyHeader() {
         verticalArrangement = Arrangement.Center
     ) {
         Row(
-            modifier = Modifier.height(20.dp)
+            modifier = Modifier
+                .height(20.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Divider(modifier = Modifier
-                .size(height = 1.dp, width = 72.dp),
+            Divider(
+                modifier = Modifier
+                    .size(height = 1.dp, width = 72.dp),
                 color = Color(0xffC3C3C6)
             )
             Text(

@@ -6,13 +6,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScrollableTabRow
@@ -57,209 +60,202 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
+
     val users = homeViewModel.usersList.collectAsState().value
 
-    Log.d("usrs", "$users")
-
-    val filteredAlphabetically by remember {
-        homeViewModel.filteredAlphabetically
-    }
-
-    Log.d("fltralp", "$filteredAlphabetically")
-    Log.d("fltralpV", "${homeViewModel.filteredAlphabetically}")
-
-    LaunchedEffect(filteredAlphabetically) {
-        homeViewModel.filterUsersAlphabetically(users)
-    }
+    val filteredAlphabetically by remember { homeViewModel.filteredAlphabetically }
+    LaunchedEffect(filteredAlphabetically) { homeViewModel.filterUsersAlphabetically(users) }
 
     val filteredByBirthday by remember { homeViewModel.filteredByBirthday }
-
-    Log.d("fltrbitr", "$filteredByBirthday")
-    Log.d("fltrBirtV", "${homeViewModel.filteredByBirthday}")
-    
-    LaunchedEffect(filteredByBirthday) {
-        homeViewModel.filterUsersByBirthDay(users)
-    }
-    
-    val refFail by rememberSaveable {
-       mutableStateOf(homeViewModel.isRefreshing.value)
-    }
+    LaunchedEffect(filteredByBirthday) { homeViewModel.filterUsersByBirthDay(users) }
 
     val filterIsActive = remember { mutableStateOf(false) }
-
     LaunchedEffect(filteredAlphabetically, filteredByBirthday) {
         filterIsActive.value = filteredAlphabetically || filteredByBirthday
     }
-
-    Log.d("fltrIcnH", "$filterIsActive")
 
     val query = rememberSaveable { mutableStateOf("") }
 
     val pagerState = rememberPagerState { tabItems.size }
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
-    LaunchedEffect(selectedTabIndex) {pagerState.animateScrollToPage(selectedTabIndex) }
+    LaunchedEffect(selectedTabIndex) { pagerState.animateScrollToPage(selectedTabIndex) }
     LaunchedEffect(pagerState.currentPage) { selectedTabIndex = pagerState.currentPage }
 
-    val refreshing by homeViewModel.isRefreshing.collectAsState()
 
-    val refreshingFailed = homeViewModel.refreshingFailed.collectAsState().value
-    Log.d("isref", "$refreshingFailed")
+    val refreshing by rememberSaveable { mutableStateOf(homeViewModel.isRefreshing) }
 
-    val refreshState = rememberPullRefreshState(refreshing = refreshing,
-        onRefresh = { homeViewModel.refreshUsers() }
-    )
+    val refreshingFailed = homeViewModel.refreshingFailed
+
+    val refreshState = rememberPullRefreshState(
+        refreshing = refreshing.value,
+        onRefresh = { homeViewModel.refreshUsers() })
+
 
     val snackBarHostState by remember { mutableStateOf(SnackbarHostState()) }
-
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    Log.d("sht", "${sheetState.currentValue}")
     val sheetScope = rememberCoroutineScope()
 
-    val sheetIsActive = remember { mutableStateOf(sheetState.currentValue) }
-    LaunchedEffect(sheetState.currentValue) { sheetIsActive.value = sheetState.currentValue }
 
+    ModalBottomSheetLayout(
+        sheetContent = {
+            FilterBottomSheet(
+                hide = { sheetScope.launch { sheetState.hide() } },
+                filteredAlphabetically = filteredAlphabetically,
+                alphabetFilterIsActive = { homeViewModel.filteredAlphabetically.value = it },
+                filteredByBirthday = filteredByBirthday,
+                birthdayFilterIsActive = { homeViewModel.filteredByBirthday.value = it },
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+            )
+        },
+        sheetState = sheetState,
+        sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+        sheetBackgroundColor = MaterialTheme.colors.primary,
 
-    Scaffold(
-        topBar = {
-            Column {
-                Box(
-                    Modifier.padding(start = 16.dp, top = 6.dp, end = 16.dp)
-                ) {
-                    SearchBar(
-                        query = query,
-                        searchUser = { homeViewModel.findUser(query.value) },
-                        openSheet = {
-                            sheetScope.launch { sheetState.show() }
-                        },
-                        filterIsActive = filterIsActive,
-                        sheetValue = sheetIsActive
-                    )
-                }
-                ScrollableTabRow(selectedTabIndex = selectedTabIndex,
-                    edgePadding = 0.dp,
-                    backgroundColor = MaterialTheme.colors.primary,
-                    indicator = { tabPositions ->
-                        TabRowDefaults.Indicator(
-                            color = MaterialTheme.colors.primaryVariant,
-                            modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex])
-                        )
-                    }) {
-                    tabItems.forEachIndexed { index, tabUserItem ->
-                        Tab(selected = index == selectedTabIndex,
-                            onClick = { selectedTabIndex = index },
-                            text = {
-                                Text(
-                                    text = tabUserItem.departament,
-                                    maxLines = 1,
-                                    style = if (index == selectedTabIndex) {
-                                        MaterialTheme.typography.h4
-                                    } else {
-                                        MaterialTheme.typography.subtitle2
-                                    }
-                                )
-                            }
+        ) {
+        Scaffold(
+            topBar = {
+                Column {
+                    Box(
+                        Modifier.padding(start = 16.dp, top = 6.dp, end = 16.dp)
+                    ) {
+                        SearchBar(
+                            query = query, searchUser = { homeViewModel.findUser(query.value) },
+
+                            openSheet = {
+                                sheetScope.launch { sheetState.show() }
+                            }, filterIsActive = filterIsActive
                         )
                     }
-                }
-            }
-        },
-        snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState) { data ->
-                UpdateErrorMessage(message = data.message)
-            }
-        },
-    ) { paddingValues ->
-        Box(modifier = Modifier.pullRefresh(refreshState)) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                HorizontalPager(
-                    state = pagerState, modifier = Modifier.fillMaxWidth()
-                ) { index ->
-                    val currentTab by remember { mutableStateOf(tabItems[index].departament) }
-                    val filteredUsers = remember(users, currentTab) {
-                        users.filter { user ->
-                            when (currentTab) {
-                                "Все" -> true
-                                "Designers" -> user.department == "design"
-                                "Analytics" -> user.department == "analytics"
-                                "Managers" -> user.department == "management"
-                                "IOS" -> user.department == "ios"
-                                "Android" -> user.department == "android"
-                                else -> false
-                            }
+                    ScrollableTabRow(selectedTabIndex = selectedTabIndex,
+                        edgePadding = 0.dp,
+                        backgroundColor = MaterialTheme.colors.primary,
+                        indicator = { tabPositions ->
+                            TabRowDefaults.Indicator(
+                                color = MaterialTheme.colors.primaryVariant,
+                                modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex])
+                            )
+                        }) {
+                        tabItems.forEachIndexed { index, tabUserItem ->
+                            Tab(selected = index == selectedTabIndex,
+                                onClick = { selectedTabIndex = index },
+                                text = {
+                                    Text(
+                                        text = tabUserItem.departament,
+                                        maxLines = 1,
+                                        style = if (index == selectedTabIndex) {
+                                            MaterialTheme.typography.h4
+                                        } else {
+                                            MaterialTheme.typography.subtitle2
+                                        }
+                                    )
+                                })
                         }
                     }
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        if (filteredByBirthday) {
-                            val thisYearBirthdayList = filteredUsers.toThisBirthdayYearList()
-                            val nextYearBirthdayList = filteredUsers.toNextYearBirthdayList()
-                            items(thisYearBirthdayList) { user ->
-                                UserItem(user = user, modifier = Modifier, onClick = {
-                                    navController.navigate(
-                                        Screens.UsersScreen.route + "?userId=${user.id}&avatarUrl=${user.avatarUrl}&firstName=${user.firstName}&lastName=${user.lastName}&userTag=${user.userTag}&department=${user.department}&birthday=${user.birthday}&phone=${user.phone}"
-                                    )
-                                }, filteredByBirthday = remember { mutableStateOf(filteredByBirthday) }
-                                )
-                            }
-                            if(nextYearBirthdayList.isNotEmpty()) {
-                                item {
-                                    StickyHeader()
+                }
+            },
+            snackbarHost = {
+                SnackbarHost(hostState = snackBarHostState) { data ->
+                    UpdateErrorMessage(message = data.message)
+                }
+            },
+        ) { paddingValues ->
+            Box(modifier = Modifier.pullRefresh(refreshState)) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                ) {
+                    HorizontalPager(
+                        state = pagerState, modifier = Modifier.fillMaxWidth()
+                    ) { index ->
+                        val currentTab by remember { mutableStateOf(tabItems[index].departament) }
+                        val filteredUsers = remember(users, currentTab) {
+                            users.filter { user ->
+                                when (currentTab) {
+                                    "Все" -> true
+                                    "Designers" -> user.department == "design"
+                                    "Analytics" -> user.department == "analytics"
+                                    "Managers" -> user.department == "management"
+                                    "IOS" -> user.department == "ios"
+                                    "Android" -> user.department == "android"
+                                    else -> false
                                 }
-                                items(filteredUsers.toNextYearBirthdayList()) { user ->
+                            }
+                        }
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            if (filteredByBirthday) {
+                                val thisYearBirthdayList = filteredUsers.toThisBirthdayYearList()
+                                val nextYearBirthdayList = filteredUsers.toNextYearBirthdayList()
+                                items(thisYearBirthdayList) { user ->
                                     UserItem(user = user, modifier = Modifier, onClick = {
                                         navController.navigate(
                                             Screens.UsersScreen.route + "?userId=${user.id}&avatarUrl=${user.avatarUrl}&firstName=${user.firstName}&lastName=${user.lastName}&userTag=${user.userTag}&department=${user.department}&birthday=${user.birthday}&phone=${user.phone}"
                                         )
-                                    }, filteredByBirthday = remember { mutableStateOf(filteredByBirthday) })
+                                    }, filteredByBirthday = remember {
+                                        mutableStateOf(filteredByBirthday)
+                                    })
+                                }
+                                if (nextYearBirthdayList.isNotEmpty()) {
+                                    item {
+                                        StickyHeader()
+                                    }
+                                    items(filteredUsers.toNextYearBirthdayList()) { user ->
+                                        UserItem(user = user, modifier = Modifier, onClick = {
+                                            navController.navigate(
+                                                Screens.UsersScreen.route + "?userId=${user.id}&avatarUrl=${user.avatarUrl}&firstName=${user.firstName}&lastName=${user.lastName}&userTag=${user.userTag}&department=${user.department}&birthday=${user.birthday}&phone=${user.phone}"
+                                            )
+                                        }, filteredByBirthday = remember {
+                                            mutableStateOf(filteredByBirthday)
+                                        })
+                                    }
+                                }
+                            } else {
+                                items(filteredUsers) { user ->
+                                    UserItem(user = user, modifier = Modifier, onClick = {
+                                        navController.navigate(
+                                            Screens.UsersScreen.route + "?userId=${user.id}&avatarUrl=${user.avatarUrl}&firstName=${user.firstName}&lastName=${user.lastName}&userTag=${user.userTag}&department=${user.department}&birthday=${user.birthday}&phone=${user.phone}"
+                                        )
+                                    }, filteredByBirthday = remember {
+                                        mutableStateOf(filteredByBirthday)
+                                    })
                                 }
                             }
-                        } else {
-                            items(filteredUsers) { user ->
-                                UserItem(user = user, modifier = Modifier, onClick = {
-                                    navController.navigate(
-                                        Screens.UsersScreen.route + "?userId=${user.id}&avatarUrl=${user.avatarUrl}&firstName=${user.firstName}&lastName=${user.lastName}&userTag=${user.userTag}&department=${user.department}&birthday=${user.birthday}&phone=${user.phone}"
+                            if (query.value != "" && homeViewModel.notFound.value) {
+                                item() {
+                                    NothingWasFoundBox(
+                                        modifier = Modifier
+                                            .align(Alignment.CenterHorizontally)
+                                            .padding(top = 220.dp)
                                     )
-                                }, filteredByBirthday = remember { mutableStateOf(filteredByBirthday) })
+                                }
                             }
                         }
-                        if(query.value != "" && homeViewModel.notFound.value) {
-                               item() {
-                                    NothingWasFoundBox(modifier = Modifier.align(Alignment.CenterHorizontally)
-                                        .padding(top = 220.dp)
-                                    )
-                               }
+                    }
+                    if (refreshingFailed.value) {
+                        LaunchedEffect(true) {
+                            snackBarHostState.showSnackbar(
+                                "Не могу обновить данные.\n" + "Проверь соединение с интернетом."
+                            )
                         }
                     }
                 }
-                if (refreshingFailed) {
-                    LaunchedEffect(true) {
-                        snackBarHostState.showSnackbar(
-                            "Не могу обновить данные.\n" + "Проверь соединение с интернетом."
-                        )
-                    }
-                }
+                PullRefreshIndicator(
+                    refreshing = refreshing.value,
+                    state = refreshState,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    backgroundColor = MaterialTheme.colors.primary
+                )
             }
-            PullRefreshIndicator(
-                refreshing = refreshing,
-                state = refreshState,
-                modifier = Modifier.align(Alignment.TopCenter),
-                backgroundColor = MaterialTheme.colors.primary
-            )
         }
-        FilterBottomSheet(state = sheetState,
-            filteredAlphabetically = filteredAlphabetically,
-            alphabetFilterIsActive = { homeViewModel.filteredAlphabetically.value = it },
-            filteredByBirthday = filteredByBirthday,
-            birthdayFilterIsActive = { homeViewModel.filteredByBirthday.value = it })
     }
 }
+        
+
+
 

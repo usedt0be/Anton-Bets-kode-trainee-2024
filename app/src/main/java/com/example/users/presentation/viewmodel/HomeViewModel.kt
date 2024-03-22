@@ -55,10 +55,10 @@ class HomeViewModel @Inject constructor(
     private val _notFound = mutableStateOf(false)
     val notFound = _notFound
 
-    private val _isRefreshing = MutableStateFlow(false)
+    private val _isRefreshing = mutableStateOf(false)
     val isRefreshing = _isRefreshing
 
-    private val _refreshingFailed =  MutableStateFlow(false)
+    private val _refreshingFailed =  mutableStateOf(false)
     val refreshingFailed = _refreshingFailed
 
     private fun getUsers() {
@@ -67,23 +67,18 @@ class HomeViewModel @Inject constructor(
                 val usersFlow = getUsersFromDbUseCase.execute()
                 usersFlow.collect { users ->
                     val mappedUsers = users.map { it.toUsers() }
-                    Log.d("userList", "$users")
                     withContext(Dispatchers.IO) {
                         _usersList.value = mappedUsers
                         _notFilteredUsers.value = mappedUsers
                     }
-                    Log.d("usrsNF", "${_notFilteredUsers.value}")
                 }
             } catch (e: Exception) {
                 val usersFlow = getUsersWithoutInternetUseCase.execute()
                 usersFlow.collect { users ->
-                    Log.d("internetOff", "$users")
                     withContext(Dispatchers.IO) {
                         _usersList.value = users.map { it.toUsers() }
                         _notFilteredUsers.value =users.map { it.toUsers() }
                     }
-                    Log.d("usrsN", "${_usersList.value}")
-                    Log.d("usrsNF", "${_notFilteredUsers.value}")
                 }
             } catch (e: IOException) {
                 error(e)
@@ -102,8 +97,7 @@ class HomeViewModel @Inject constructor(
                     getUsersWithoutInternetUseCase.execute()
                 }
             }
-            Log.d("blank", "${query.isBlank()}")
-            Log.d("blank", "${foundUsers}")
+
             updateUiWithUsers(foundUsers)
         }
     }
@@ -112,20 +106,16 @@ class HomeViewModel @Inject constructor(
     private fun updateUiWithUsers(foundUsers: Flow<List<UserEntity>>) {
         viewModelScope.launch(Dispatchers.IO) {
                 foundUsers.collect { listOfUsers ->
-                    if(listOfUsers.isEmpty()) {
+                    if (listOfUsers.isEmpty()) {
                         _notFound.value = true
                     } else {_notFound.value = false}
-
-
-                    if (filteredAlphabetically.value) {
-                        filterUsersAlphabetically(listOfUsers.map { it.toUsers() })
+                        _usersList.value = listOfUsers.map { it.toUsers() }
+                    if(filteredAlphabetically.value) {
+                        filterUsersAlphabetically(_usersList.value)
                     } else if(filteredByBirthday.value) {
-                        filterUsersByBirthDay(listOfUsers.map { it.toUsers() })
+                        filterUsersByBirthDay(_usersList.value)
                     }
 
-                    Log.d("searchedusers", "${listOfUsers}")
-                    Log.d("found", "${_notFound.value}")
-                    _usersList.value = listOfUsers.map { it.toUsers() }
                 }
         }
     }
@@ -136,17 +126,11 @@ class HomeViewModel @Inject constructor(
             try {
                 _isRefreshing.value = true
                 val usersFlow = refreshUsersUseCase.execute()
-                Log.d("newusers", "$usersFlow")
-                usersFlow.collect{ users ->
-                    Log.d("newusers", "$users")
-                    withContext(Dispatchers.Main) {
-                        _usersList.value = users.map { it.toUsers() }
-                    }
-                    isRefreshing.value = false
-                }
+                updateUiWithUsers(usersFlow)
+                isRefreshing.value = false
+
             }catch (e: UnknownHostException) {
                 _refreshingFailed.value = true
-                Log.d("updateErr", "$e")
                 _isRefreshing.value = false
             }
         }
@@ -154,10 +138,8 @@ class HomeViewModel @Inject constructor(
 
     fun filterUsersAlphabetically(users: List<User>)  {
         if(filteredAlphabetically.value) {
-            Log.d("fltrV", "${_filteredAlphabetically.value}")
             viewModelScope.launch(Dispatchers.IO) {
                 val sorted = users.sortedWith(compareBy({ it.firstName }, { it.lastName }))
-                Log.d("sortedusers", "$sorted")
                withContext(Dispatchers.Main) {
                     _usersList.value = sorted
                 }
@@ -172,10 +154,8 @@ class HomeViewModel @Inject constructor(
 
     suspend fun filterUsersByBirthDay(users: List<User>) {
         if (filteredByBirthday.value) {
-            Log.d("fltrV", "${_filteredByBirthday.value}")
             viewModelScope.launch(Dispatchers.IO) {
                 val sorted = users.toThisBirthdayYearList() + users.toNextYearBirthdayList()
-                Log.d("sortedbrth", "$sorted")
                 withContext(Dispatchers.Main) {
                     _usersList.value = sorted
                 }
