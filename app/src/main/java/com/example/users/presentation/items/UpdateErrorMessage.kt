@@ -1,13 +1,11 @@
 package com.example.users.presentation.items
 
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarData
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,7 +21,7 @@ fun UpdateErrorMessage(message: String) {
         .height(64.dp)
         .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        backgroundColor = if (message == "Не могу обновить данные.\\n\" + \"Проверь соединение с интернетом.") MaterialTheme.colors.error else {MaterialTheme.colors.primaryVariant}
+        backgroundColor = MaterialTheme.colors.error
         ) {
         Text(
             text = message,
