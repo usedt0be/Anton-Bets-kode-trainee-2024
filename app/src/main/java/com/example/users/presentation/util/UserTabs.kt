@@ -6,9 +6,17 @@ data class TabUserItem(
 
 val tabItems = listOf(
     TabUserItem(departament = "Все"),
-    TabUserItem(departament = "Designers"),
-    TabUserItem(departament = "Analytics"),
-    TabUserItem(departament = "Managers"),
-    TabUserItem(departament = "IOS"),
-    TabUserItem(departament = "Android")
+    TabUserItem(departament = "Дизайн"),
+    TabUserItem(departament = "Аналитика"),
+    TabUserItem(departament = "Менеджмент"),
+    TabUserItem(departament = "Android"),
+    TabUserItem(departament = "iOS"),
+    TabUserItem(departament = "QA"),
+    TabUserItem(departament = "Бэк-офис"),
+    TabUserItem(departament = "Frontend"),
+    TabUserItem(departament = "PR"),
+    TabUserItem(departament = "HR"),
+    TabUserItem(departament = "Backend"),
+    TabUserItem(departament = "Техподдержка"),
+
 )
