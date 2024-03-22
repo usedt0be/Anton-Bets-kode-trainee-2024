@@ -2,12 +2,7 @@ package com.example.users.presentation.viewmodel
 
 import android.database.sqlite.SQLiteException
 import android.util.Log
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.users.data.mappers.toUsers
@@ -19,7 +14,6 @@ import com.example.users.domain.usecases.RefreshUsersUseCase
 import com.example.users.presentation.User
 import com.example.users.presentation.util.Extensions.toNextYearBirthdayList
 import com.example.users.presentation.util.Extensions.toThisBirthdayYearList
-import com.example.users.presentation.util.Util
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -44,6 +38,7 @@ class HomeViewModel @Inject constructor(
     private var _usersList = MutableStateFlow<List<User>>(emptyList())
     var usersList : StateFlow<List<User>> = _usersList
 
+
     private var _notFilteredUsers = MutableStateFlow<List<User>>(emptyList())
 
 
@@ -54,13 +49,11 @@ class HomeViewModel @Inject constructor(
     val filteredByBirthday = _filteredByBirthday
 
 
-    private val _filteredByBirthdayUsers = MutableStateFlow<Map<String,List<User>>>(emptyMap())
-
-
-
     init {
         getUsers()
     }
+    private val _notFound = mutableStateOf(false)
+    val notFound = _notFound
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing
@@ -119,7 +112,19 @@ class HomeViewModel @Inject constructor(
     private fun updateUiWithUsers(foundUsers: Flow<List<UserEntity>>) {
         viewModelScope.launch(Dispatchers.IO) {
                 foundUsers.collect { listOfUsers ->
+                    if(listOfUsers.isEmpty()) {
+                        _notFound.value = true
+                    } else {_notFound.value = false}
+
+
+                    if (filteredAlphabetically.value) {
+                        filterUsersAlphabetically(listOfUsers.map { it.toUsers() })
+                    } else if(filteredByBirthday.value) {
+                        filterUsersByBirthDay(listOfUsers.map { it.toUsers() })
+                    }
+
                     Log.d("searchedusers", "${listOfUsers}")
+                    Log.d("found", "${_notFound.value}")
                     _usersList.value = listOfUsers.map { it.toUsers() }
                 }
         }
@@ -143,14 +148,11 @@ class HomeViewModel @Inject constructor(
                 _refreshingFailed.value = true
                 Log.d("updateErr", "$e")
                 _isRefreshing.value = false
-
             }
         }
-
     }
 
-
-    fun sortUsersByAlphabetically(users: List<User>)  {
+    fun filterUsersAlphabetically(users: List<User>)  {
         if(filteredAlphabetically.value) {
             Log.d("fltrV", "${_filteredAlphabetically.value}")
             viewModelScope.launch(Dispatchers.IO) {

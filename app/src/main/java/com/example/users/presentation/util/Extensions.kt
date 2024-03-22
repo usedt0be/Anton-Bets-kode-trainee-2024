@@ -1,6 +1,7 @@
 package com.example.users.presentation.util
 
 import com.example.users.presentation.User
+import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -51,5 +52,15 @@ object Extensions {
         return birthdayThisYearList.sortedBy {
             it.birthday.toCalendar().get(Calendar.DAY_OF_YEAR)
         }
+    }
+
+
+    fun String.toFormatDate(): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val date = inputFormat.parse(this)
+        val outputFormat = SimpleDateFormat("d MMM", Locale.getDefault())
+        val symbols = DateFormatSymbols.getInstance(Locale.getDefault())
+        val monthName = symbols.months[outputFormat.calendar.get(Calendar.MONTH)].substring(startIndex = 0, endIndex = 3)
+        return "${outputFormat.format(date)} "
     }
 }

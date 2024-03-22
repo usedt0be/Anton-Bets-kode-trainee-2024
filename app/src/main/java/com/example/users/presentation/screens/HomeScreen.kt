@@ -41,14 +41,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.users.presentation.items.FilterBottomSheet
+import com.example.users.presentation.items.NothingWasFoundBox
 import com.example.users.presentation.items.SearchBar
 import com.example.users.presentation.items.StickyHeader
 import com.example.users.presentation.items.UpdateErrorMessage
 import com.example.users.presentation.items.UserItem
 import com.example.users.presentation.util.Extensions.toNextYearBirthdayList
 import com.example.users.presentation.util.Extensions.toThisBirthdayYearList
-import com.example.users.presentation.util.tabItems
 import com.example.users.presentation.util.Screens
+import com.example.users.presentation.util.tabItems
 import com.example.users.presentation.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
 
@@ -68,12 +69,10 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
     Log.d("fltralpV", "${homeViewModel.filteredAlphabetically}")
 
     LaunchedEffect(filteredAlphabetically) {
-        homeViewModel.sortUsersByAlphabetically(users)
+        homeViewModel.filterUsersAlphabetically(users)
     }
 
-    val filteredByBirthday by remember {
-        homeViewModel.filteredByBirthday
-    }
+    val filteredByBirthday by remember { homeViewModel.filteredByBirthday }
 
     Log.d("fltrbitr", "$filteredByBirthday")
     Log.d("fltrBirtV", "${homeViewModel.filteredByBirthday}")
@@ -99,12 +98,8 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
     val pagerState = rememberPagerState { tabItems.size }
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
-    LaunchedEffect(selectedTabIndex) {
-        pagerState.animateScrollToPage(selectedTabIndex)
-    }
-    LaunchedEffect(pagerState.currentPage) {
-        selectedTabIndex = pagerState.currentPage
-    }
+    LaunchedEffect(selectedTabIndex) {pagerState.animateScrollToPage(selectedTabIndex) }
+    LaunchedEffect(pagerState.currentPage) { selectedTabIndex = pagerState.currentPage }
 
     val refreshing by homeViewModel.isRefreshing.collectAsState()
 
@@ -118,7 +113,11 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
     val snackBarHostState by remember { mutableStateOf(SnackbarHostState()) }
 
     val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    Log.d("sht", "${sheetState.currentValue}")
     val sheetScope = rememberCoroutineScope()
+
+    val sheetIsActive = remember { mutableStateOf(sheetState.currentValue) }
+    LaunchedEffect(sheetState.currentValue) { sheetIsActive.value = sheetState.currentValue }
 
 
     Scaffold(
@@ -133,8 +132,8 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
                         openSheet = {
                             sheetScope.launch { sheetState.show() }
                         },
-                        filterIsActive = filterIsActive
-
+                        filterIsActive = filterIsActive,
+                        sheetValue = sheetIsActive
                     )
                 }
                 ScrollableTabRow(selectedTabIndex = selectedTabIndex,
@@ -186,7 +185,7 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
                             when (currentTab) {
                                 "Все" -> true
                                 "Designers" -> user.department == "design"
-                                "Analysts" -> user.department == "analytics"
+                                "Analytics" -> user.department == "analytics"
                                 "Managers" -> user.department == "management"
                                 "IOS" -> user.department == "ios"
                                 "Android" -> user.department == "android"
@@ -201,22 +200,27 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         if (filteredByBirthday) {
-                            items(filteredUsers.toThisBirthdayYearList()) { user ->
+                            val thisYearBirthdayList = filteredUsers.toThisBirthdayYearList()
+                            val nextYearBirthdayList = filteredUsers.toNextYearBirthdayList()
+                            items(thisYearBirthdayList) { user ->
                                 UserItem(user = user, modifier = Modifier, onClick = {
                                     navController.navigate(
                                         Screens.UsersScreen.route + "?userId=${user.id}&avatarUrl=${user.avatarUrl}&firstName=${user.firstName}&lastName=${user.lastName}&userTag=${user.userTag}&department=${user.department}&birthday=${user.birthday}&phone=${user.phone}"
                                     )
-                                })
+                                }, filteredByBirthday = remember { mutableStateOf(filteredByBirthday) }
+                                )
                             }
-                            stickyHeader {
-                                StickyHeader()
-                            }
-                            items(filteredUsers.toNextYearBirthdayList()) { user ->
-                                UserItem(user = user, modifier = Modifier, onClick = {
-                                    navController.navigate(
-                                        Screens.UsersScreen.route + "?userId=${user.id}&avatarUrl=${user.avatarUrl}&firstName=${user.firstName}&lastName=${user.lastName}&userTag=${user.userTag}&department=${user.department}&birthday=${user.birthday}&phone=${user.phone}"
-                                    )
-                                })
+                            if(nextYearBirthdayList.isNotEmpty()) {
+                                item {
+                                    StickyHeader()
+                                }
+                                items(filteredUsers.toNextYearBirthdayList()) { user ->
+                                    UserItem(user = user, modifier = Modifier, onClick = {
+                                        navController.navigate(
+                                            Screens.UsersScreen.route + "?userId=${user.id}&avatarUrl=${user.avatarUrl}&firstName=${user.firstName}&lastName=${user.lastName}&userTag=${user.userTag}&department=${user.department}&birthday=${user.birthday}&phone=${user.phone}"
+                                        )
+                                    }, filteredByBirthday = remember { mutableStateOf(filteredByBirthday) })
+                                }
                             }
                         } else {
                             items(filteredUsers) { user ->
@@ -224,8 +228,15 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
                                     navController.navigate(
                                         Screens.UsersScreen.route + "?userId=${user.id}&avatarUrl=${user.avatarUrl}&firstName=${user.firstName}&lastName=${user.lastName}&userTag=${user.userTag}&department=${user.department}&birthday=${user.birthday}&phone=${user.phone}"
                                     )
-                                })
+                                }, filteredByBirthday = remember { mutableStateOf(filteredByBirthday) })
                             }
+                        }
+                        if(query.value != "" && homeViewModel.notFound.value) {
+                               item() {
+                                    NothingWasFoundBox(modifier = Modifier.align(Alignment.CenterHorizontally)
+                                        .padding(top = 220.dp)
+                                    )
+                               }
                         }
                     }
                 }
@@ -241,7 +252,7 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
                 refreshing = refreshing,
                 state = refreshState,
                 modifier = Modifier.align(Alignment.TopCenter),
-                backgroundColor = MaterialTheme.colors.secondary
+                backgroundColor = MaterialTheme.colors.primary
             )
         }
         FilterBottomSheet(state = sheetState,
