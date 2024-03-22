@@ -23,7 +23,7 @@ fun UpdateErrorMessage(message: String) {
         .height(64.dp)
         .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        backgroundColor = MaterialTheme.colors.error
+        backgroundColor = if (message == "Не могу обновить данные.\\n\" + \"Проверь соединение с интернетом.") MaterialTheme.colors.error else {MaterialTheme.colors.primaryVariant}
         ) {
         Text(
             text = message,

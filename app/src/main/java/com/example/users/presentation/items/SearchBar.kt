@@ -43,38 +43,23 @@ import com.example.users.R
 import com.example.users.ui.theme.inter
 
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SearchBar(searchUser:(String) -> Unit,
-              query: MutableState<String>,
-              openSheet: () -> Unit,
-              filterIsActive: MutableState<Boolean>,
-              sheetValue: MutableState<ModalBottomSheetValue>,
+fun SearchBar(
+    searchUser: (String) -> Unit,
+    query: MutableState<String>,
+    openSheet: () -> Unit,
+    filterIsActive: MutableState<Boolean>,
 ) {
 
-    val sheetIsActive by remember { sheetValue }
-    Log.d("shtisActive", "$sheetIsActive")
-
-    var searchIsActive by remember {
-        mutableStateOf(false)
-    }
-    Log.d("searchbar", "$searchIsActive")
-
+    var searchIsActive by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(targetValue = if (searchIsActive) 0.8f else 1.0f)
-
     val focusManager = LocalFocusManager.current
-
     val filter by remember { filterIsActive }
-    Log.d("fltrICON" ,"$filter")
 
     Row(
-        modifier = Modifier.height(52.dp),
-        verticalAlignment = Alignment.CenterVertically
-    )
-    {
-        CustomTextField(
-            enabled = if (sheetIsActive == ModalBottomSheetValue.Expanded) {false} else {true} ,
-            value = query.value,
+        modifier = Modifier.height(52.dp), verticalAlignment = Alignment.CenterVertically
+    ) {
+        CustomTextField(value = query.value,
             onValueChange = {
                 query.value = it
                 searchUser(query.value)
@@ -94,7 +79,7 @@ fun SearchBar(searchUser:(String) -> Unit,
                 )
             },
             placeholder = {
-                if(!searchIsActive) {
+                if (!searchIsActive) {
                     Text(
                         text = "Введите имя, тег, почту...",
                         style = MaterialTheme.typography.subtitle2
@@ -146,16 +131,14 @@ fun SearchBar(searchUser:(String) -> Unit,
                         )
                     }
                 }
-            }
-        )
+            })
         AnimatedVisibility(
             visible = searchIsActive,
             enter = slideInHorizontally(),
             exit = slideOutHorizontally(),
             modifier = Modifier.padding(start = 12.dp)
         ) {
-            Text(
-                text = "Отмена",
+            Text(text = "Отмена",
                 modifier = Modifier
                     .clickable {
                         query.value = ""
@@ -165,8 +148,7 @@ fun SearchBar(searchUser:(String) -> Unit,
                     }
                     .align(Alignment.CenterVertically),
                 maxLines = 1,
-                style = MaterialTheme.typography.h5
-            )
+                style = MaterialTheme.typography.h5)
         }
 
 
@@ -185,9 +167,6 @@ fun SearchBarPreview() {
         openSheet = {},
         filterIsActive = remember {
             mutableStateOf(true)
-        },
-        sheetValue = remember {
-            mutableStateOf(ModalBottomSheetValue.Expanded)
-        },
+        }
     )
 }
