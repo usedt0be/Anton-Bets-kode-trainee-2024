@@ -4,6 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -53,14 +56,15 @@ fun FilterBottomSheet(
 
     ModalBottomSheetLayout(
         sheetContent = {
-            Column(modifier = Modifier.height(218.dp),
-                verticalArrangement = Arrangement.Center
+            Column(modifier = Modifier
+                .height(218.dp)
+                .fillMaxSize()
             ) {
                 Text(
                     text = "Сортировка",
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(top = 24.dp),
+                        .padding( top = 24.dp),
                     style = MaterialTheme.typography.h2,
                     lineHeight = 24.sp,
                     fontWeight = FontWeight.W600,
@@ -91,7 +95,8 @@ fun FilterBottomSheet(
                         text = " По алфавиту",
                         style = MaterialTheme.typography.h6,
                         lineHeight = 20.sp,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(start = 14.dp)
                     )
                 }
 
@@ -119,9 +124,11 @@ fun FilterBottomSheet(
                         text = " По дню рождения",
                         style = MaterialTheme.typography.h6,
                         lineHeight = 20.sp,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(start = 14.dp)
                     )
                 }
+                Spacer(modifier = Modifier.weight(1f))
             }
         },
         sheetState = state,
@@ -134,8 +141,7 @@ fun FilterBottomSheet(
 @Composable
 fun FilterBottomPreview() {
     FilterBottomSheet(
-        state = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Expanded),
+        state = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Expanded),
         filteredAlphabetically = true,
         alphabetFilterIsActive = {},
         filteredByBirthday = true,

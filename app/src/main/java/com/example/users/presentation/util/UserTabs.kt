@@ -7,7 +7,7 @@ data class TabUserItem(
 val tabItems = listOf(
     TabUserItem(departament = "Все"),
     TabUserItem(departament = "Designers"),
-    TabUserItem(departament = "Analysts"),
+    TabUserItem(departament = "Analytics"),
     TabUserItem(departament = "Managers"),
     TabUserItem(departament = "IOS"),
     TabUserItem(departament = "Android")

@@ -17,6 +17,8 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -46,7 +48,12 @@ import com.example.users.ui.theme.inter
 fun SearchBar(searchUser:(String) -> Unit,
               query: MutableState<String>,
               openSheet: () -> Unit,
-              filterIsActive: MutableState<Boolean>) {
+              filterIsActive: MutableState<Boolean>,
+              sheetValue: MutableState<ModalBottomSheetValue>,
+) {
+
+    val sheetIsActive by remember { sheetValue }
+    Log.d("shtisActive", "$sheetIsActive")
 
     var searchIsActive by remember {
         mutableStateOf(false)
@@ -57,9 +64,7 @@ fun SearchBar(searchUser:(String) -> Unit,
 
     val focusManager = LocalFocusManager.current
 
-    var filter by remember {
-        filterIsActive
-    }
+    val filter by remember { filterIsActive }
     Log.d("fltrICON" ,"$filter")
 
     Row(
@@ -68,6 +73,7 @@ fun SearchBar(searchUser:(String) -> Unit,
     )
     {
         CustomTextField(
+            enabled = if (sheetIsActive == ModalBottomSheetValue.Expanded) {false} else {true} ,
             value = query.value,
             onValueChange = {
                 query.value = it
@@ -110,7 +116,11 @@ fun SearchBar(searchUser:(String) -> Unit,
                 unfocusedIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
                 cursorColor = MaterialTheme.colors.primaryVariant,
-                backgroundColor = MaterialTheme.colors.surface
+                backgroundColor = MaterialTheme.colors.surface,
+                disabledLabelColor = Color.Transparent,
+                focusedLabelColor = Color.Transparent,
+                unfocusedLabelColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
             ),
             trailingIcon = {
                 if (searchIsActive) {
@@ -165,6 +175,7 @@ fun SearchBar(searchUser:(String) -> Unit,
 
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 fun SearchBarPreview() {
@@ -174,6 +185,9 @@ fun SearchBarPreview() {
         openSheet = {},
         filterIsActive = remember {
             mutableStateOf(true)
-        }
+        },
+        sheetValue = remember {
+            mutableStateOf(ModalBottomSheetValue.Expanded)
+        },
     )
 }
