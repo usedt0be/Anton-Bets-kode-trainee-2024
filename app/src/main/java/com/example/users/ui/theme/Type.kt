@@ -10,34 +10,16 @@ import com.example.users.R
 
 val inter = FontFamily(
     Font(R.font.inter_medium, FontWeight.W500),
-    Font(R.font.inter_semibold, FontWeight.SemiBold),
-    Font(R.font.inter_bold, FontWeight.Bold),
-    Font(R.font.inter_regular, FontWeight.W400)
+    Font(R.font.inter_semibold, FontWeight.SemiBold)
 )
 val Typography = Typography(
 
     h1 = TextStyle(
-        fontFamily = inter,
-        fontWeight = FontWeight.W700,
-        fontSize = 20.sp,
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
         lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
-        color = Color(0XFF050510)
-    ),
-    h2 = TextStyle(
-        fontFamily = inter,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 20.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
-        color = Color(0XFF050510)
-    ),
-    h3 = TextStyle(
-        fontFamily = inter,
-        fontWeight = FontWeight.W400,
-        fontSize = 17.sp,
-        lineHeight = 22.sp,
-        color = Color(0XFF97979B)
+        letterSpacing = 0.5.sp
     ),
     h4  = TextStyle(
         fontFamily = inter,
@@ -73,6 +55,7 @@ val Typography = Typography(
         fontSize = 15.sp,
         color = Color(0XFF97979B)
     ),
+
     caption = TextStyle(
         fontFamily = inter,
         fontWeight = FontWeight.W400,
