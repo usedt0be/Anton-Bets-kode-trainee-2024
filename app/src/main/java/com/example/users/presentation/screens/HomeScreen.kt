@@ -39,10 +39,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.users.presentation.items.FilterBottomSheet
 import com.example.users.presentation.items.SearchBar
+import com.example.users.presentation.items.StickyHeader
 import com.example.users.presentation.items.UpdateErrorMessage
 import com.example.users.presentation.items.UserItem
 import com.example.users.presentation.util.Extensions.toNextYearBirthdayList
@@ -64,10 +64,8 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
         homeViewModel.filteredAlphabetically
     }
 
-
     Log.d("fltralp", "$filteredAlphabetically")
     Log.d("fltralpV", "${homeViewModel.filteredAlphabetically}")
-
 
     LaunchedEffect(filteredAlphabetically) {
         homeViewModel.sortUsersByAlphabetically(users)
@@ -79,12 +77,22 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
 
     Log.d("fltrbitr", "$filteredByBirthday")
     Log.d("fltrBirtV", "${homeViewModel.filteredByBirthday}")
-
-
-
+    
     LaunchedEffect(filteredByBirthday) {
         homeViewModel.filterUsersByBirthDay(users)
     }
+    
+    val refFail by rememberSaveable {
+       mutableStateOf(homeViewModel.isRefreshing.value)
+    }
+
+    val filterIsActive = remember { mutableStateOf(false) }
+
+    LaunchedEffect(filteredAlphabetically, filteredByBirthday) {
+        filterIsActive.value = filteredAlphabetically || filteredByBirthday
+    }
+
+    Log.d("fltrIcnH", "$filterIsActive")
 
     val query = rememberSaveable { mutableStateOf("") }
 
@@ -119,11 +127,15 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
                 Box(
                     Modifier.padding(start = 16.dp, top = 6.dp, end = 16.dp)
                 ) {
-                    SearchBar(query = query,
+                    SearchBar(
+                        query = query,
                         searchUser = { homeViewModel.findUser(query.value) },
                         openSheet = {
                             sheetScope.launch { sheetState.show() }
-                        })
+                        },
+                        filterIsActive = filterIsActive
+
+                    )
                 }
                 ScrollableTabRow(selectedTabIndex = selectedTabIndex,
                     edgePadding = 0.dp,
@@ -197,7 +209,7 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
                                 })
                             }
                             stickyHeader {
-                                Text(text = "2025", fontSize = 28.sp)
+                                StickyHeader()
                             }
                             items(filteredUsers.toNextYearBirthdayList()) { user ->
                                 UserItem(user = user, modifier = Modifier, onClick = {

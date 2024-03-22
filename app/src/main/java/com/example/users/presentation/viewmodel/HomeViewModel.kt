@@ -30,11 +30,6 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.UnknownHostException
 import javax.inject.Inject
-enum class STATE {
-    LOADING,
-    SUCCESS,
-    FAILED
-}
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -45,13 +40,12 @@ class HomeViewModel @Inject constructor(
     private val refreshUsersUseCase = RefreshUsersUseCase(repositoryImpl)
     private val getUsersWithoutInternetUseCase = GetUsersWithoutInternetUseCase(repositoryImpl)
 
-    private var state by mutableStateOf(STATE.LOADING)
 
     private var _usersList = MutableStateFlow<List<User>>(emptyList())
     var usersList : StateFlow<List<User>> = _usersList
 
     private var _notFilteredUsers = MutableStateFlow<List<User>>(emptyList())
-    var notFilteredUsers: StateFlow<List<User>> =  _notFilteredUsers
+
 
     private var _filteredAlphabetically = mutableStateOf(false)
     var filteredAlphabetically = _filteredAlphabetically
@@ -61,7 +55,7 @@ class HomeViewModel @Inject constructor(
 
 
     private val _filteredByBirthdayUsers = MutableStateFlow<Map<String,List<User>>>(emptyMap())
-    val filteredByBirthdayUsers = _filteredByBirthdayUsers
+
 
 
     init {
@@ -77,7 +71,6 @@ class HomeViewModel @Inject constructor(
     private fun getUsers() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                state = STATE.LOADING
                 val usersFlow = getUsersFromDbUseCase.execute()
                 usersFlow.collect { users ->
                     val mappedUsers = users.map { it.toUsers() }
@@ -88,23 +81,18 @@ class HomeViewModel @Inject constructor(
                     }
                     Log.d("usrsNF", "${_notFilteredUsers.value}")
                 }
-                state = STATE.SUCCESS
             } catch (e: Exception) {
-//                state = STATE.LOADING
                 val usersFlow = getUsersWithoutInternetUseCase.execute()
                 usersFlow.collect { users ->
                     Log.d("internetOff", "$users")
-//                    val mappedUsers = users.map { it.toUsers() }
                     withContext(Dispatchers.IO) {
                         _usersList.value = users.map { it.toUsers() }
                         _notFilteredUsers.value =users.map { it.toUsers() }
                     }
                     Log.d("usrsN", "${_usersList.value}")
                     Log.d("usrsNF", "${_notFilteredUsers.value}")
-                    state = STATE.SUCCESS
                 }
             } catch (e: IOException) {
-                state = STATE.FAILED
                 error(e)
             }
         }
@@ -168,19 +156,19 @@ class HomeViewModel @Inject constructor(
             viewModelScope.launch(Dispatchers.IO) {
                 val sorted = users.sortedWith(compareBy({ it.firstName }, { it.lastName }))
                 Log.d("sortedusers", "$sorted")
-                withContext(Dispatchers.Main) {
+               withContext(Dispatchers.Main) {
                     _usersList.value = sorted
                 }
             }
         }
         else {
-            viewModelScope.launch(Dispatchers.IO) {
+           viewModelScope.launch(Dispatchers.IO) {
                 _usersList.value = _notFilteredUsers.value
-            }
+           }
         }
     }
 
-    fun filterUsersByBirthDay(users: List<User>) {
+    suspend fun filterUsersByBirthDay(users: List<User>) {
         if (filteredByBirthday.value) {
             Log.d("fltrV", "${_filteredByBirthday.value}")
             viewModelScope.launch(Dispatchers.IO) {

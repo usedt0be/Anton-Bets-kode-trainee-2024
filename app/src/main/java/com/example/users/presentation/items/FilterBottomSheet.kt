@@ -50,19 +50,17 @@ fun FilterBottomSheet(
         mutableStateOf(filteredByBirthday)
     }
 
+
     ModalBottomSheetLayout(
         sheetContent = {
-            Column(modifier = Modifier.height(218.dp)) {
+            Column(modifier = Modifier.height(218.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
                     text = "Сортировка",
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(top = 24.dp)
-                        .clickable {
-                            scope.launch {
-                                state.hide()
-                            }
-                        },
+                        .padding(top = 24.dp),
                     style = MaterialTheme.typography.h2,
                     lineHeight = 24.sp,
                     fontWeight = FontWeight.W600,
@@ -82,6 +80,7 @@ fun FilterBottomSheet(
                             alphabetFilter = !alphabetFilter
                             alphabetFilterIsActive(alphabetFilter)
                             birthdayFilterIsActive(false)
+                            birthdayFilter = false
                             scope.launch {
                                 state.hide()
                             }
@@ -108,6 +107,7 @@ fun FilterBottomSheet(
                         onClick = {
                             birthdayFilter = !birthdayFilter
                             birthdayFilterIsActive(birthdayFilter)
+                            alphabetFilter = false
                             alphabetFilterIsActive(false)
                             scope.launch {
                                 state.hide()
