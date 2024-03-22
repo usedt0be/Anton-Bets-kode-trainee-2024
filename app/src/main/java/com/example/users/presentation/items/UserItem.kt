@@ -39,7 +39,7 @@ fun UserItem(modifier: Modifier,user: User, onClick: () -> Unit) {
             .height(80.dp)
             .background(color = MaterialTheme.colors.background)
             .clickable {
-                    onClick()
+                onClick()
             },
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
@@ -101,20 +101,22 @@ fun UserItem(modifier: Modifier,user: User, onClick: () -> Unit) {
 }
 
 
-//@Preview
-//@Composable
-//fun UserItemPreview() {
-//    UserItem(
-//        modifier = Modifier,
-//        user = User(
-//        id = "1",
-//        avatarUrl = "jlahlf",
-//        firstName = "Алексей",
-//        lastName = "Миногаров",
-//        userTag = "mi",
-//        department = "Analyst",
-//        position = "1",
-//        phone = "80787009",
-//        birthday = "02.03.1982"
-//    ))
-//}
+@Preview
+@Composable
+fun UserItemPreview() {
+    UserItem(
+        modifier = Modifier,
+        user = User(
+            id = "1",
+            avatarUrl = "jlahlf",
+            firstName = "Алексей",
+            lastName = "Миногаров",
+            userTag = "mi",
+            department = "Analyst",
+            position = "1",
+            phone = "80787009",
+            birthday = "02.03.1982"
+        ),
+        onClick = {}
+    )
+}

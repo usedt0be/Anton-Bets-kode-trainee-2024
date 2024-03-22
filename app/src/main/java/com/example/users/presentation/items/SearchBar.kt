@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -40,16 +41,27 @@ import com.example.users.R
 import com.example.users.ui.theme.inter
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
-    var isActive by remember {
+fun SearchBar(searchUser:(String) -> Unit,
+              query: MutableState<String>,
+              openSheet: () -> Unit,
+              filterIsActive: MutableState<Boolean>) {
+
+    var searchIsActive by remember {
         mutableStateOf(false)
     }
-    Log.d("searchbar", "$isActive")
+    Log.d("searchbar", "$searchIsActive")
 
-    val scale by animateFloatAsState(targetValue = if (isActive) 0.8f else 1.0f)
+    val scale by animateFloatAsState(targetValue = if (searchIsActive) 0.8f else 1.0f)
 
     val focusManager = LocalFocusManager.current
+
+    var filter by remember {
+        filterIsActive
+    }
+    Log.d("fltrICON" ,"$filter")
+
     Row(
         modifier = Modifier.height(52.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -71,12 +83,12 @@ fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
                 Icon(
                     painter = painterResource(id = R.drawable.search_is_active),
                     contentDescription = "cancel button",
-                    tint = if (isActive) MaterialTheme.colors.onPrimary
+                    tint = if (searchIsActive) MaterialTheme.colors.onPrimary
                     else MaterialTheme.colors.onSurface
                 )
             },
             placeholder = {
-                if(!isActive) {
+                if(!searchIsActive) {
                     Text(
                         text = "Введите имя, тег, почту...",
                         style = MaterialTheme.typography.subtitle2
@@ -85,13 +97,13 @@ fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
             },
             modifier = Modifier
                 .height(40.dp)
-                .onFocusChanged { focusState -> isActive = focusState.isFocused }
+                .onFocusChanged { focusState -> searchIsActive = focusState.isFocused }
                 .fillMaxWidth(fraction = scale),
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
-                isActive = false
+                searchIsActive = false
             }),
             shape = RoundedCornerShape(16.dp),
             colors = TextFieldDefaults.textFieldColors(
@@ -101,7 +113,7 @@ fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
                 backgroundColor = MaterialTheme.colors.surface
             ),
             trailingIcon = {
-                if (isActive) {
+                if (searchIsActive) {
                     IconButton(onClick = {
                         query.value = ""
                         searchUser("")
@@ -113,18 +125,21 @@ fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
                         )
                     }
                 } else {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        openSheet()
+                    }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.list_ui_alt),
+                            painter = painterResource(id = R.drawable.filter_is_not_active),
                             contentDescription = "filter button",
-                            tint = MaterialTheme.colors.onSurface
+                            tint = if (filter) MaterialTheme.colors.primaryVariant
+                            else MaterialTheme.colors.onSurface
                         )
                     }
                 }
             }
         )
         AnimatedVisibility(
-            visible = isActive,
+            visible = searchIsActive,
             enter = slideInHorizontally(),
             exit = slideOutHorizontally(),
             modifier = Modifier.padding(start = 12.dp)
@@ -136,13 +151,15 @@ fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
                         query.value = ""
                         searchUser("")
                         focusManager.clearFocus()
-                        isActive = false
+                        searchIsActive = false
                     }
                     .align(Alignment.CenterVertically),
                 maxLines = 1,
                 style = MaterialTheme.typography.h5
             )
         }
+
+
     }
 }
 
@@ -153,6 +170,10 @@ fun SearchBar(searchUser:(String) -> Unit, query: MutableState<String>) {
 fun SearchBarPreview() {
     SearchBar(
         searchUser = {},
-        query = remember { mutableStateOf("") }
+        query = remember { mutableStateOf("") },
+        openSheet = {},
+        filterIsActive = remember {
+            mutableStateOf(true)
+        }
     )
 }

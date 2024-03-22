@@ -13,7 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.users.presentation.HomeScreen
+import com.example.users.presentation.screens.HomeScreen
 import com.example.users.presentation.screens.UserScreen
 import com.example.users.presentation.util.Screens
 import com.example.users.presentation.viewmodel.HomeViewModel

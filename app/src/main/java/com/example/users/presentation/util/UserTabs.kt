@@ -1,4 +1,4 @@
-package com.example.users.presentation.items
+package com.example.users.presentation.util
 
 data class TabUserItem(
     val departament:String

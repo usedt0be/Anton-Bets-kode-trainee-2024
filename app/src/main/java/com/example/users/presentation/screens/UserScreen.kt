@@ -102,7 +102,7 @@ fun UserScreen(
                     maxLines = 1,
                     fontSize = 24.sp,
                     lineHeight = 24.sp,
-                    style = MaterialTheme.typography.h2
+                    style = MaterialTheme.typography.h1
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
