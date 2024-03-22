@@ -82,7 +82,6 @@ fun HomeScreen(homeViewModel: HomeViewModel, navController: NavController) {
     LaunchedEffect(selectedTabIndex) { pagerState.animateScrollToPage(selectedTabIndex) }
     LaunchedEffect(pagerState.currentPage) { selectedTabIndex = pagerState.currentPage }
 
-
     val refreshing by rememberSaveable { mutableStateOf(homeViewModel.isRefreshing) }
 
     val refreshingFailed = homeViewModel.refreshingFailed
