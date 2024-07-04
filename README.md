@@ -2,5 +2,5 @@
 
 
 ## Stack:
-Jetpack Compose, Retrofit, Room, Hilt, Coil, Room.
+Jetpack Compose, Retrofit, Room, Hilt, Coil.
 
